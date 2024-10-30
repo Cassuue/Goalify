@@ -59,6 +59,16 @@ import com.example.goalify.databinding.ActivityMainBinding
             }
         }
 
+        binding.materialToolBar.setOnMenuItemClickListener(){
+            when (it.itemId){
+                R.id.profile -> replaceFragment(Profile())
+                else -> {
+
+                }
+            }
+            true
+        }
+
     }
 
      private fun replaceFragment(fragment : androidx.fragment.app.Fragment){
