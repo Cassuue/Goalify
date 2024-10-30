@@ -3,7 +3,24 @@
     <style name="Base.Theme.Goalify" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="colorPrimary">@color/greenMain</item>
+        <item name="colorPrimaryVariant">@color/greenSelect</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/white</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnBackground">@color/white</item>
+
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="Theme.Goalify" parent="Base.Theme.Goalify" />
+    <style name="BottomNavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
 </resources>
