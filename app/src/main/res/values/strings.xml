@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Goalify</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="item_dropdown_type">
+        <item>Type de tâche : </item>
+        <item>Lecture</item>
+        <item>Sport</item>
+        <item>Tâches ménagères</item>
+        <item>Travail</item>
+        <item>Devoir</item>
+    </string-array>
 </resources>
