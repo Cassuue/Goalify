@@ -6,29 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Spinner
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-/*private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"*/
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AddTask.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AddTask : Fragment() {
-    // TODO: Rename and change types of parameters
-    /*private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,29 +22,76 @@ class AddTask : Fragment() {
         return inflater.inflate(R.layout.fragment_add_task, container, false)
     }
 
-    /*companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddTask.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddTask().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Ajout des items dans le spinner
+        val spinner = view.findViewById<Spinner>(R.id.typeTask)
+        // Créer un ArrayAdapter utilisant un string array et un spinner par défaut
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.item_dropdown_type,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Spécifier le type de spinner à utiliser pour afficher les items
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Ajout de l'adapter au spinner
+            spinner.adapter = adapter
+        }
+
+        // on déclare les variables nécessaires pour intéragir avec le frameLayout
+        val btnAdd = view.findViewById<Button>(R.id.Add)
+
+        val checkBoxMon = view.findViewById<CheckBox>(R.id.CheckMon)
+        val checkBoxTue = view.findViewById<CheckBox>(R.id.CheckTue)
+        val checkBoxWed = view.findViewById<CheckBox>(R.id.CheckWed)
+        val checkBoxThu = view.findViewById<CheckBox>(R.id.CheckThu)
+        val checkBoxFri = view.findViewById<CheckBox>(R.id.CheckFri)
+        val checkBoxSat = view.findViewById<CheckBox>(R.id.CheckSat)
+        val checkBoxSun = view.findViewById<CheckBox>(R.id.CheckSun)
+
+        // Dictionnaire pour récupérer les valeurs des checkboxs
+        var list_resDay = mutableMapOf(
+            "Monday" to false,
+            "Tuesday" to false,
+            "Wednesday" to false,
+            "Thursday" to false,
+            "Friday" to false,
+            "Saturday" to false,
+            "Sunday" to false)
+
+        // Tableau pour parcourir toutes les checkboxs
+        val arrayCheckBoxs = listOf(checkBoxMon, checkBoxTue, checkBoxWed, checkBoxThu, checkBoxFri, checkBoxSat, checkBoxSun)
+
+        // Pour chaque checkbox on récupère la valeur et on l'ajoute dans le dictionnaire
+        arrayCheckBoxs.forEach { checkBox->
+            checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                list_resDay[checkBox.tag.toString()] = isChecked
             }
-    }*/
+        }
+
+        // Ajout de la tâche dans la base de donnée
+        btnAdd.setOnClickListener(){
+
+            // On récupère les valeurs des champs
+            val inputName = view.findViewById<EditText>(R.id.InputName).text
+            val inputDesc = view.findViewById<EditText>(R.id.InputDesc).text
+            val selectedSpinner = spinner.selectedItem.toString()
+
+            // TODO : Ajouter le code pour envoi dans la BDD + toast de confirmation
+
+            // Réinitialisation des champs du formulaire
+            spinner.setSelection(0)
+            view.findViewById<EditText>(R.id.InputName).setText("")
+            view.findViewById<EditText>(R.id.InputDesc).setText("")
+
+            arrayCheckBoxs.forEach { checkBox ->
+                checkBox.isChecked = false
+            }
+        }
+    }
 
     fun shouldWarnOnExit(): Boolean {
-        // Logique pour déterminer s’il y a des changements non sauvegardés
-        // Exemple : retour vrai s’il y a un formulaire non sauvegardé
         return true
     }
 
@@ -68,7 +99,7 @@ class AddTask : Fragment() {
     fun showWarning(onConfirmed: () -> Unit) {
         AlertDialog.Builder(requireContext())
             .setTitle("Attention")
-            .setMessage("Vous avez des modifications non sauvegardées. Voulez-vous vraiment quitter ?")
+            .setMessage("Etes vous sûr de vouloir quitter la page ? Les modifications apportées ne seront pas enregistrées")
             .setPositiveButton("Oui") { _, _ -> onConfirmed() }
             .setNegativeButton("Non", null)
             .show()
