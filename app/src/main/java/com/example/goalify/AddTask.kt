@@ -11,6 +11,8 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
+import com.example.goalifyperso.SpinnerAdapter
+import com.example.goalifyperso.SpinnerItem
 
 class AddTask : Fragment() {
 
@@ -27,17 +29,29 @@ class AddTask : Fragment() {
 
         // Ajout des items dans le spinner
         val spinner = view.findViewById<Spinner>(R.id.typeTask)
-        // Créer un ArrayAdapter utilisant un string array et un spinner par défaut
         ArrayAdapter.createFromResource(
             requireContext(),
             R.array.item_dropdown_type,
-            android.R.layout.simple_spinner_item
+            R.layout.item_spinner_type
         ).also { adapter ->
-            // Spécifier le type de spinner à utiliser pour afficher les items
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Ajout de l'adapter au spinner
+            adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
             spinner.adapter = adapter
         }
+
+        val spinnerColor = view.findViewById<Spinner>(R.id.BtnColor)
+
+        val color_items = listOf(
+            SpinnerItem(R.drawable.color_item_red, "red"),
+            SpinnerItem(R.drawable.color_item_orange, "orange"),
+            SpinnerItem(R.drawable.color_item_yellow, "yellow"),
+            SpinnerItem(R.drawable.color_item_green, "green"),
+            SpinnerItem(R.drawable.color_item_blue, "blue"),
+            SpinnerItem(R.drawable.color_item_purple, "purple")
+        )
+
+
+        val adapter = SpinnerAdapter(requireContext(), color_items)
+        spinnerColor.adapter = adapter
 
         // on déclare les variables nécessaires pour intéragir avec le frameLayout
         val btnAdd = view.findViewById<Button>(R.id.Add)
@@ -77,6 +91,10 @@ class AddTask : Fragment() {
             val inputName = view.findViewById<EditText>(R.id.InputName).text
             val inputDesc = view.findViewById<EditText>(R.id.InputDesc).text
             val selectedSpinner = spinner.selectedItem.toString()
+
+            val positionSelectedColor = spinnerColor.selectedItemPosition
+            val selectedTag = color_items[positionSelectedColor].text
+            //Toast.makeText(requireContext(), selectedTag, Toast.LENGTH_SHORT).show()
 
             // TODO : Ajouter le code pour envoi dans la BDD + toast de confirmation
 
