@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.goalify"
+    namespace = "ca.uqac.goalify"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.goalify"
+        applicationId = "ca.uqac.goalify"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -48,4 +49,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation(libs.firebase.auth)
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 }

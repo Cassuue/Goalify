@@ -1,8 +1,7 @@
-package com.example.goalify
+package ca.uqac.goalify
 
 import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,9 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
-import com.example.goalifyperso.SpinnerAdapterColor
-import com.example.goalifyperso.SpinnerItemColor
+import androidx.fragment.app.Fragment
+import ca.uqac.goalify.SpinnerAdapterColor
+import ca.uqac.goalify.SpinnerItemColor
 
 class AddTask : Fragment() {
 

@@ -1,4 +1,4 @@
-package com.example.goalify
+package ca.uqac.goalify
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
