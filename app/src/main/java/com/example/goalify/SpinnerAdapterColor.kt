@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.TextView
 import com.example.goalify.R
 
-class SpinnerAdapter(
+class SpinnerAdapterColor(
     context: Context,
-    private val images: List<SpinnerItem>
-) : ArrayAdapter<SpinnerItem>(context, 0, images) {
+    private val images: List<SpinnerItemColor>
+) : ArrayAdapter<SpinnerItemColor>(context, 0, images) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return createView(position, convertView, parent)

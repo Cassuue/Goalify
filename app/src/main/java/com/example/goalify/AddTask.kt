@@ -11,8 +11,8 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
-import com.example.goalifyperso.SpinnerAdapter
-import com.example.goalifyperso.SpinnerItem
+import com.example.goalifyperso.SpinnerAdapterColor
+import com.example.goalifyperso.SpinnerItemColor
 
 class AddTask : Fragment() {
 
@@ -41,16 +41,16 @@ class AddTask : Fragment() {
         val spinnerColor = view.findViewById<Spinner>(R.id.BtnColor)
 
         val color_items = listOf(
-            SpinnerItem(R.drawable.color_item_red, "red"),
-            SpinnerItem(R.drawable.color_item_orange, "orange"),
-            SpinnerItem(R.drawable.color_item_yellow, "yellow"),
-            SpinnerItem(R.drawable.color_item_green, "green"),
-            SpinnerItem(R.drawable.color_item_blue, "blue"),
-            SpinnerItem(R.drawable.color_item_purple, "purple")
+            SpinnerItemColor(R.drawable.color_item_red, "red"),
+            SpinnerItemColor(R.drawable.color_item_orange, "orange"),
+            SpinnerItemColor(R.drawable.color_item_yellow, "yellow"),
+            SpinnerItemColor(R.drawable.color_item_green, "green"),
+            SpinnerItemColor(R.drawable.color_item_blue, "blue"),
+            SpinnerItemColor(R.drawable.color_item_purple, "purple")
         )
 
 
-        val adapter = SpinnerAdapter(requireContext(), color_items)
+        val adapter = SpinnerAdapterColor(requireContext(), color_items)
         spinnerColor.adapter = adapter
 
         // on déclare les variables nécessaires pour intéragir avec le frameLayout
@@ -100,6 +100,7 @@ class AddTask : Fragment() {
 
             // Réinitialisation des champs du formulaire
             spinner.setSelection(0)
+            spinnerColor.setSelection(0)
             view.findViewById<EditText>(R.id.InputName).setText("")
             view.findViewById<EditText>(R.id.InputDesc).setText("")
 
