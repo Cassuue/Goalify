@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "534920273944",
+    "project_id": "goalify-8b7f6",
+    "storage_bucket": "goalify-8b7f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534920273944:android:695cc8dc09e3837efce36d",
+        "android_client_info": {
+          "package_name": "ca.uqac.goalify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9u9fd9yCF_-hrKMh_JbLFzpbKEBAIQL8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

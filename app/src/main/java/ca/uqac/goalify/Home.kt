@@ -1,4 +1,4 @@
-package com.example.goalify
+package ca.uqac.goalify
 
 import android.content.res.Resources
 import android.os.Bundle
