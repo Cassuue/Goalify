@@ -70,9 +70,8 @@ class LoginActivity : AppCompatActivity() {
 
         // Créer un compte
         createAccountText.setOnClickListener {
-            val email = emailField.text.toString()
-            val password = passwordField.text.toString()
-            createAccount(email, password)
+            startActivity(Intent(this, RegisterActivity::class.java))
+            finish()
         }
 
         // Connexion avec Google
