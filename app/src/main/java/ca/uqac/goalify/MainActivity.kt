@@ -45,7 +45,7 @@ import com.google.firebase.auth.FirebaseAuth
                         when (it.itemId) {
 
                             R.id.home -> replaceFragment(Home())
-                            R.id.rewards -> replaceFragment(Rewards())
+                            R.id.rewards -> replaceFragment(RewardsFragment())
                             R.id.calendar -> replaceFragment(Calendar())
 
                             else -> {
@@ -60,7 +60,7 @@ import com.google.firebase.auth.FirebaseAuth
                     when (it.itemId) {
 
                         R.id.home -> replaceFragment(Home())
-                        R.id.rewards -> replaceFragment(Rewards())
+                        R.id.rewards -> replaceFragment(RewardsFragment())
                         R.id.calendar -> replaceFragment(Calendar())
 
                         else -> {
