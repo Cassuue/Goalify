@@ -113,8 +113,6 @@ class AddTask : Fragment() {
 
             // TODO : Ajouter le code pour envoi dans la BDD + toast de confirmation
 
-            Log.d("AddBDD", "Nom de la tache : ${inputName}")
-
             val newtask = database.child("users").child(userUid.toString()).child("tasks").push()
 
             val task = mapOf(

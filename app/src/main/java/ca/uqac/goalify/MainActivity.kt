@@ -55,19 +55,6 @@ class MainActivity : AppCompatActivity() {
                 insets
             }
 
-            val database = FirebaseDatabase.getInstance()
-            val uid = auth.currentUser?.uid
-            println("UID de l'utilisateur connecté : $uid")
-
-            val userRef =  database.reference.child("users").child(auth.currentUser?.uid ?: "")
-            userRef.setValue("${auth.currentUser?.displayName}")
-                .addOnSuccessListener {
-                    println("Données de l'utilisateur enregistrées !")
-                }
-                .addOnFailureListener { exception ->
-                    println("Erreur lors de l'enregistrement : ${exception.message}")
-                }
-
             // Add the fragment home to the main page
             replaceFragment(Home())
 

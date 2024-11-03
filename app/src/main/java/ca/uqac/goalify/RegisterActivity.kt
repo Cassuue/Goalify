@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -42,6 +43,19 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, "Les mots de passe ne correspondent pas", Toast.LENGTH_SHORT).show()
             } else {
                 createAccount(email, password)
+
+                val database = FirebaseDatabase.getInstance()
+                val uid = auth.currentUser?.uid
+                println("UID de l'utilisateur connecté : $uid")
+
+                val userRef =  database.reference.child("users").child(auth.currentUser?.uid ?: "")
+                userRef.setValue("${auth.currentUser?.displayName}")
+                    .addOnSuccessListener {
+                        println("Données de l'utilisateur enregistrées !")
+                    }
+                    .addOnFailureListener { exception ->
+                        println("Erreur lors de l'enregistrement : ${exception.message}")
+                    }
             }
         }
 
