@@ -12,31 +12,22 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
 import java.text.SimpleDateFormat
 import java.util.Date
 
 // TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-/*private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"*/
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Home.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Home : Fragment() {
-    // TODO: Rename and change types of parameters
-    /*private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }*/
+    private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,43 +37,67 @@ class Home : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    /*companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Home.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            Home().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }*/
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-// Pattern complet : d MMM yyyy, EEE, HH:mm:ss z
+        // Initialiser FirebaseAuth
+        auth = FirebaseAuth.getInstance()
+
+        // Récupérer l'UID de l'utilisateur actuel, s'il est connecté
+        val currentUser = auth.currentUser
+        val userUid = currentUser?.uid
+
+        database = Firebase.database.reference
+
+        // Pattern complet : d MMM yyyy, EEE, HH:mm:ss z
         val dateFormat = SimpleDateFormat("EEE")
         val day = dateFormat.format(Date())
 
-        // Idée : comparer la valeur de "day" aux 3 premières lettres de la chaine de caractères
-        // contenue dans la base de données pour trouver les taches apartenant au jour actuel
-        // penser a tout passer en minuscule (true) : assertTrue { first.equals(firstCapitalized, true) }
+        val today = when (day) {
+            "mon" -> "monday"
+            "tue" -> "tuesday"
+            "wed" -> "wednesday"
+            "thu" -> "thursday"
+            "fri" -> "friday"
+            "sat" -> "saturday"
+            else -> "sunday"
+        }
 
-        val first = "kotlin"
-        val firstCapitalized = "KOTLIN"
-        val test = first.equals(firstCapitalized, true)
-        println("Test : $test")
+        database.child("users").child(userUid.toString()).child("tasks").orderByChild("days/$today").equalTo(true)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (taskSnapshot in dataSnapshot.children) {
+                        // Récupère les informations de chaque tâche où "Monday" est à true
+                        val taskName = taskSnapshot.child("name").value.toString()
+                        val taskType = taskSnapshot.child("type").value.toString()
+                        val taskColor = taskSnapshot.child("color").value.toString()
+                        val taskDesc = taskSnapshot.child("description"). value.toString()
+                        // Récupérer le LinearLayout défini en XML
+                        val linearLayoutTasks = view.findViewById<LinearLayout>(R.id.listTask)
 
-        // Récupérer le LinearLayout défini en XML
+                        val color = when (taskColor) {
+                            "blue" -> R.drawable.color_item_blue
+                            "green" -> R.drawable.color_item_green
+                            "orange" -> R.drawable.color_item_orange
+                            "purple" -> R.drawable.color_item_purple
+                            "yellow" -> R.drawable.color_item_yellow
+                            else -> R.drawable.color_item_red
+                        }
+
+                        // Ajouter une tâche
+                        addTaskView(linearLayoutTasks,taskName,taskDesc,color)
+
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    println("Erreur lors de la récupération des tâches : ${databaseError.message}")
+                }
+            })
+
+
+
+        /*// Récupérer le LinearLayout défini en XML
         val linearLayoutTasks = view.findViewById<LinearLayout>(R.id.listTask)
 
         // On crée le linear layout pour afficher la tache
@@ -164,7 +179,7 @@ class Home : Fragment() {
 
         // Ajouter le TextView au LinearLayout
         linearLayoutTasks.addView(mainLayout)
-        linearLayoutTasks.addView(divider)
+        linearLayoutTasks.addView(divider)*/
 
         val btn = view.findViewById<Button>(R.id.AddTask)
 
@@ -184,5 +199,90 @@ class Home : Fragment() {
 
     fun Int.dpToPx(): Int {
         return (this * Resources.getSystem().displayMetrics.density).toInt()
+    }
+
+    fun addTaskView(parentLayout: LinearLayout, taskName: String, taskDescription: String, colorResId: Int) {
+
+        // Création du LinearLayout principal pour afficher la tâche
+        val mainLayout = LinearLayout(parentLayout.context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT
+            ).apply {
+                bottomMargin = 20.dpToPx()
+            }
+            orientation = LinearLayout.HORIZONTAL
+        }
+
+        // Création du CheckBox
+        val checkBox = CheckBox(parentLayout.context).apply {
+            id = View.generateViewId()
+            layoutParams = LinearLayout.LayoutParams(40.dpToPx(), 40.dpToPx())
+        }
+
+        // Création du LinearLayout vertical pour les TextViews
+        val textContainer = LinearLayout(parentLayout.context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1f
+            ).apply {
+                marginStart = 20.dpToPx()
+                marginEnd = 20.dpToPx()
+            }
+            orientation = LinearLayout.VERTICAL
+        }
+
+        // Création du TextView pour le nom de la tâche
+        val textNameTask = TextView(parentLayout.context).apply {
+            id = View.generateViewId()
+            text = taskName
+            textSize = 17f
+        }
+
+        // Création du TextView pour la description de la tâche
+        val textDesc = TextView(parentLayout.context).apply {
+            id = View.generateViewId()
+            text = taskDescription
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        // Ajout des TextViews dans le LinearLayout vertical
+        textContainer.addView(textNameTask)
+        textContainer.addView(textDesc)
+
+        // Création de l'ImageView pour la couleur de la tâche
+        val colorItem = ImageView(parentLayout.context).apply {
+            id = View.generateViewId()
+            layoutParams = LinearLayout.LayoutParams(30.dpToPx(), 30.dpToPx()).apply {
+                gravity = Gravity.CENTER
+            }
+            setImageResource(colorResId) // Définissez la couleur de l'image
+        }
+
+        // Ajout des éléments dans le LinearLayout principal
+        mainLayout.addView(checkBox)
+        mainLayout.addView(textContainer)
+        mainLayout.addView(colorItem)
+
+        // Création de la vue de diviseur
+        val divider = View(parentLayout.context).apply {
+            id = View.generateViewId()
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                1.dpToPx() // Hauteur de 1dp, utilisez l'extension dpToPx pour la conversion
+            ).apply {
+                marginStart = 25.dpToPx()
+                marginEnd = 25.dpToPx()
+            }
+            setBackgroundResource(R.color.grey)
+        }
+
+        // Ajouter le LinearLayout principal et le diviseur au parent
+        parentLayout.addView(mainLayout)
+        parentLayout.addView(divider)
     }
 }

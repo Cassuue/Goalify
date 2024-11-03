@@ -15,6 +15,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import ca.uqac.goalify.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -53,6 +54,19 @@ class MainActivity : AppCompatActivity() {
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
                 insets
             }
+
+            val database = FirebaseDatabase.getInstance()
+            val uid = auth.currentUser?.uid
+            println("UID de l'utilisateur connecté : $uid")
+
+            val userRef =  database.reference.child("users").child(auth.currentUser?.uid ?: "")
+            userRef.setValue("${auth.currentUser?.displayName}")
+                .addOnSuccessListener {
+                    println("Données de l'utilisateur enregistrées !")
+                }
+                .addOnFailureListener { exception ->
+                    println("Erreur lors de l'enregistrement : ${exception.message}")
+                }
 
             // Add the fragment home to the main page
             replaceFragment(Home())

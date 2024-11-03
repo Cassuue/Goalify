@@ -2,6 +2,7 @@ package ca.uqac.goalify
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,16 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
-import ca.uqac.goalify.SpinnerAdapterColor
-import ca.uqac.goalify.SpinnerItemColor
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.database
 
 class AddTask : Fragment() {
+
+    private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +44,14 @@ class AddTask : Fragment() {
             adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
             spinner.adapter = adapter
         }
+        // Initialiser FirebaseAuth
+        auth = FirebaseAuth.getInstance()
+
+        // Récupérer l'UID de l'utilisateur actuel, s'il est connecté
+        val currentUser = auth.currentUser
+        val userUid = currentUser?.uid
+
+        database = Firebase.database.reference
 
         val spinnerColor = view.findViewById<Spinner>(R.id.BtnColor)
 
@@ -66,13 +81,13 @@ class AddTask : Fragment() {
 
         // Dictionnaire pour récupérer les valeurs des checkboxs
         var list_resDay = mutableMapOf(
-            "Monday" to false,
-            "Tuesday" to false,
-            "Wednesday" to false,
-            "Thursday" to false,
-            "Friday" to false,
-            "Saturday" to false,
-            "Sunday" to false)
+            "monday" to false,
+            "tuesday" to false,
+            "wednesday" to false,
+            "thursday" to false,
+            "friday" to false,
+            "saturday" to false,
+            "sunday" to false)
 
         // Tableau pour parcourir toutes les checkboxs
         val arrayCheckBoxs = listOf(checkBoxMon, checkBoxTue, checkBoxWed, checkBoxThu, checkBoxFri, checkBoxSat, checkBoxSun)
@@ -88,15 +103,37 @@ class AddTask : Fragment() {
         btnAdd.setOnClickListener(){
 
             // On récupère les valeurs des champs
-            val inputName = view.findViewById<EditText>(R.id.InputName).text
-            val inputDesc = view.findViewById<EditText>(R.id.InputDesc).text
-            val selectedSpinner = spinner.selectedItem.toString()
+            val inputName = view.findViewById<EditText>(R.id.InputName).text.toString()
+            val inputDesc = view.findViewById<EditText>(R.id.InputDesc).text.toString()
+            val selectedType = spinner.selectedItem.toString()
 
             val positionSelectedColor = spinnerColor.selectedItemPosition
-            val selectedTag = color_items[positionSelectedColor].text
+            val selectedColor = color_items[positionSelectedColor].text.toString()
             //Toast.makeText(requireContext(), selectedTag, Toast.LENGTH_SHORT).show()
 
             // TODO : Ajouter le code pour envoi dans la BDD + toast de confirmation
+
+            Log.d("AddBDD", "Nom de la tache : ${inputName}")
+
+            val newtask = database.child("users").child(userUid.toString()).child("tasks").push()
+
+            val task = mapOf(
+                "name" to inputName,
+                "type" to selectedType,
+                "color" to selectedColor,
+                "description" to inputDesc,
+                "users" to userUid,
+                "days" to list_resDay
+            )
+
+            newtask.setValue(task)
+                .addOnSuccessListener {
+                    Log.d("AddBDD", "Ajout de la task avec succès !")
+                }
+                .addOnFailureListener { exception ->
+                    Log.d("AddBDD","Erreur lors de l'enregistrement : ${exception.message}")
+                }
+
 
             // Réinitialisation des champs du formulaire
             spinner.setSelection(0)

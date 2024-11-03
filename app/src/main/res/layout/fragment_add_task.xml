@@ -123,48 +123,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="Monday"/>
+                android:tag="monday"/>
 
             <CheckBox
                 android:id="@+id/CheckTue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="Tuesday"/>
+                android:tag="tuesday"/>
             <CheckBox
                 android:id="@+id/CheckWed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="Wednesday"/>
+                android:tag="wednesday"/>
 
             <CheckBox
                 android:id="@+id/CheckThu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="Thursday"/>
+                android:tag="thursday"/>
 
             <CheckBox
                 android:id="@+id/CheckFri"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="Friday"/>
+                android:tag="friday"/>
 
             <CheckBox
                 android:id="@+id/CheckSat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="Saturday"/>
+                android:tag="saturday"/>
 
             <CheckBox
                 android:id="@+id/CheckSun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="Sunday"/>
+                android:tag="sunday"/>
 
         </LinearLayout>
 
