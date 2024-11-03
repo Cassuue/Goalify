@@ -107,6 +107,14 @@ class AddTask : Fragment() {
             arrayCheckBoxs.forEach { checkBox ->
                 checkBox.isChecked = false
             }
+
+            val fragmentHome = Home()
+
+            // Utilise FragmentTransaction pour remplacer le fragment actuel par le framgment_add_task
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.frameLayout, fragmentHome)
+                .addToBackStack(null)
+                .commit()
         }
     }
 
