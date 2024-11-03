@@ -1,21 +1,39 @@
 package ca.uqac.goalify
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import ca.uqac.goalify.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
+import java.util.concurrent.TimeUnit
 
- class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        // NOTIFICATIONS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
+            }
+        }
+        setupPeriodicWork()
+
+
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -91,5 +109,11 @@ import com.google.firebase.auth.FirebaseAuth
          val fragmentTransation = fragmentManager.beginTransaction()
          fragmentTransation.replace(R.id.frameLayout, fragment)
          fragmentTransation.commit()
+     }
+
+     private fun setupPeriodicWork() {
+         // worker qui vérif les notifs sur firebase
+         val workRequest = OneTimeWorkRequestBuilder<FirebaseWorker>().build()
+         WorkManager.getInstance(this).enqueue(workRequest)
      }
 }
