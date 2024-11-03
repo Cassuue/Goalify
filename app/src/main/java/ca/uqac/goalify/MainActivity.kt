@@ -1,5 +1,6 @@
 package ca.uqac.goalify
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -40,9 +41,10 @@ class MainActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         val currentUser = auth.currentUser
-        if (currentUser !== null) { // TODO: Change !== to ==
+        if (currentUser == null) { // TODO: Change !== to ==
             // User is not signed in
-            setContentView(R.layout.activity_login)
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         } else {
             // User is signed in
             setContentView(binding.root)
