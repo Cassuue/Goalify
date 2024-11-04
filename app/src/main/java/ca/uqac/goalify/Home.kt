@@ -54,12 +54,12 @@ class Home : Fragment() {
         val day = dateFormat.format(Date())
 
         val today = when (day) {
-            "mon" -> "monday"
-            "tue" -> "tuesday"
-            "wed" -> "wednesday"
-            "thu" -> "thursday"
-            "fri" -> "friday"
-            "sat" -> "saturday"
+            "Mon" -> "monday"
+            "Tue" -> "tuesday"
+            "Wed" -> "wednesday"
+            "Thu" -> "thursday"
+            "Fri" -> "friday"
+            "Sat" -> "saturday"
             else -> "sunday"
         }
 
