@@ -8,7 +8,7 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 
-class FirebaseWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+class NotificationChecker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         Log.d("FirebaseWorker", "Worker exécuté")
         // Logique simulée pour vérifier Firebase (ici, rien pour le moment)

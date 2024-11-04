@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
             }
         }
-        setupPeriodicWork()
 
 
         enableEdgeToEdge()
@@ -114,9 +113,4 @@ class MainActivity : AppCompatActivity() {
          fragmentTransation.commit()
      }
 
-     private fun setupPeriodicWork() {
-         // worker qui vérif les notifs sur firebase
-         val workRequest = OneTimeWorkRequestBuilder<FirebaseWorker>().build()
-         WorkManager.getInstance(this).enqueue(workRequest)
-     }
 }
