@@ -109,9 +109,6 @@ class AddTask : Fragment() {
 
             val positionSelectedColor = spinnerColor.selectedItemPosition
             val selectedColor = color_items[positionSelectedColor].text.toString()
-            //Toast.makeText(requireContext(), selectedTag, Toast.LENGTH_SHORT).show()
-
-            // TODO : Ajouter le code pour envoi dans la BDD + toast de confirmation
 
             val newtask = database.child("users").child(userUid.toString()).child("tasks").push()
 
@@ -120,16 +117,16 @@ class AddTask : Fragment() {
                 "type" to selectedType,
                 "color" to selectedColor,
                 "description" to inputDesc,
-                "users" to userUid,
+                "validate" to false,
                 "days" to list_resDay
             )
 
             newtask.setValue(task)
                 .addOnSuccessListener {
-                    Log.d("AddBDD", "Ajout de la task avec succès !")
+                    Log.d("BDD", "Ajout de la task avec succès !")
                 }
                 .addOnFailureListener { exception ->
-                    Log.d("AddBDD","Erreur lors de l'enregistrement : ${exception.message}")
+                    Log.d("BDD","Erreur lors de l'enregistrement : ${exception.message}")
                 }
 
 

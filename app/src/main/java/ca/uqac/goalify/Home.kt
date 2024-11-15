@@ -1,26 +1,37 @@
 package ca.uqac.goalify
 
+import android.app.Dialog
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ListView
+import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import java.text.SimpleDateFormat
 import java.util.Date
+
 
 // TODO: Rename parameter arguments, choose names that match
 
@@ -28,6 +39,10 @@ class Home : Fragment() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var listAdapter: ListAdapter
+    private lateinit var listData: Task
+    var dataArrayList = ArrayList<Task?>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,31 +77,58 @@ class Home : Fragment() {
             "Sat" -> "saturday"
             else -> "sunday"
         }
+        val listView = view.findViewById<ListView>(R.id.listview)
+
 
         database.child("users").child(userUid.toString()).child("tasks").orderByChild("days/$today").equalTo(true)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
+            .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    dataArrayList.clear()
+
                     for (taskSnapshot in dataSnapshot.children) {
-                        // Récupère les informations de chaque tâche où "Monday" est à true
+                        // Récupère les informations de chaque tâche du jour
+
+                        val taskKey = taskSnapshot.key.toString()
                         val taskName = taskSnapshot.child("name").value.toString()
                         val taskType = taskSnapshot.child("type").value.toString()
-                        val taskColor = taskSnapshot.child("color").value.toString()
                         val taskDesc = taskSnapshot.child("description"). value.toString()
-                        // Récupérer le LinearLayout défini en XML
-                        val linearLayoutTasks = view.findViewById<LinearLayout>(R.id.listTask)
+                        val taskColor = taskSnapshot.child("color").value.toString()
 
-                        val color = when (taskColor) {
-                            "blue" -> R.drawable.color_item_blue
-                            "green" -> R.drawable.color_item_green
-                            "orange" -> R.drawable.color_item_orange
-                            "purple" -> R.drawable.color_item_purple
-                            "yellow" -> R.drawable.color_item_yellow
-                            else -> R.drawable.color_item_red
-                        }
+                        val taskMon = taskSnapshot.child("days").child("monday").value.toString()
+                        val taskTue = taskSnapshot.child("days").child("tuesday").value.toString()
+                        val taskWed = taskSnapshot.child("days").child("wednesday").value.toString()
+                        val taskThu = taskSnapshot.child("days").child("thursday").value.toString()
+                        val taskFri = taskSnapshot.child("days").child("friday").value.toString()
+                        val taskSat = taskSnapshot.child("days").child("saturday").value.toString()
+                        val taskSun = taskSnapshot.child("days").child("sunday").value.toString()
+                        val taskValid = taskSnapshot.child("validate").value.toString() == "true"
 
-                        // Ajouter une tâche
-                        addTaskView(linearLayoutTasks,taskName,taskDesc,color)
 
+                        var list_Days = mutableMapOf(
+                            "monday" to (taskMon == "true"),
+                            "tuesday" to (taskTue == "true"),
+                            "wednesday" to (taskWed == "true"),
+                            "thursday" to (taskThu == "true"),
+                            "friday" to (taskFri == "true"),
+                            "saturday" to (taskSat == "true"),
+                            "sunday" to (taskSun == "true")
+                        )
+
+                        // Création d'une tache à l'aide de la classe Task
+                        listData = Task(taskKey,taskName, taskDesc,  taskColor, taskType, list_Days, taskValid)
+                        dataArrayList.add(listData)
+                    }
+
+                    // Add of all the today task
+                    listAdapter = ListAdapter(requireContext(), dataArrayList, userUid)
+                    listView.adapter = listAdapter
+                    listView.isClickable = true
+
+                    // Event listener for update tasks
+                    listView.setOnItemLongClickListener { parent, view, position, id ->
+                        val selectedItem = dataArrayList[position]
+                        updateTask(selectedItem, userUid)
+                        true
                     }
                 }
 
@@ -95,96 +137,9 @@ class Home : Fragment() {
                 }
             })
 
+        val btn: FloatingActionButton = view.findViewById(R.id.AddTask)
 
-
-        /*// Récupérer le LinearLayout défini en XML
-        val linearLayoutTasks = view.findViewById<LinearLayout>(R.id.listTask)
-
-        // On crée le linear layout pour afficher la tache
-        val mainLayout = LinearLayout(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-            ).apply {
-                bottomMargin = 20.dpToPx()
-            }
-            orientation = LinearLayout.HORIZONTAL
-        }
-
-        // Création du CheckBox
-        val checkBox = CheckBox(requireContext()).apply {
-            id = View.generateViewId()
-            layoutParams = LinearLayout.LayoutParams(40.dpToPx(), 40.dpToPx())
-        }
-
-        // Création du LinearLayout vertical pour les TextViews
-        val textContainer = LinearLayout(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                0,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1f
-            ).apply {
-                marginStart = 20.dpToPx()
-                marginEnd = 20.dpToPx()
-            }
-            orientation = LinearLayout.VERTICAL
-        }
-
-        // Création du premier TextView (nom de la tâche)
-        val textNameTask = TextView(requireContext()).apply {
-            id = View.generateViewId()
-            text = "Tâche2"
-            textSize = 17f
-        }
-
-        // Création du deuxième TextView (description de la tâche)
-        val textDesc = TextView(requireContext()).apply {
-            id = View.generateViewId()
-            text = "Description2"
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-        }
-
-        // Ajouter les TextViews au LinearLayout vertical
-        textContainer.addView(textNameTask)
-        textContainer.addView(textDesc)
-
-        // Création de l'ImageView
-        val colorItem = ImageView(requireContext()).apply {
-            id = View.generateViewId()
-            layoutParams = LinearLayout.LayoutParams(30.dpToPx(), 30.dpToPx()).apply {
-                gravity = Gravity.CENTER
-            }
-            setImageResource(R.drawable.color_item_green) // Définissez votre image ici
-        }
-        mainLayout.addView(checkBox)
-        mainLayout.addView(textContainer)
-        mainLayout.addView(colorItem)
-
-        // Création de la vue pour le diviseur
-        val divider = View(requireContext()).apply {
-            id = View.generateViewId()
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1.dpToPx() // Hauteur de 1dp, utilisez l'extension dpToPx pour la conversion
-            ).apply {
-                marginStart = 25.dpToPx()
-                marginEnd = 25.dpToPx()
-                weight = 1f // Appliquer le poids si nécessaire
-            }
-            setBackgroundResource(R.color.grey)
-        }
-
-        // Ajouter le TextView au LinearLayout
-        linearLayoutTasks.addView(mainLayout)
-        linearLayoutTasks.addView(divider)*/
-
-        val btn = view.findViewById<Button>(R.id.AddTask)
-
-        btn.setOnClickListener(){
-            //Toast.makeText(requireContext(), "Bouton cliqué !", Toast.LENGTH_SHORT).show()
+        btn.setOnClickListener() {
             // Crée une instance du FragmentAddTask
             val fragmentAddTask = AddTask()
 
@@ -194,95 +149,140 @@ class Home : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-
     }
 
-    fun Int.dpToPx(): Int {
-        return (this * Resources.getSystem().displayMetrics.density).toInt()
-    }
+    fun updateTask(task : Task?, userID : String?){
+        if (task != null) {
 
-    fun addTaskView(parentLayout: LinearLayout, taskName: String, taskDescription: String, colorResId: Int) {
+            val dialog = Dialog(requireContext())
+            dialog.setContentView(R.layout.dialog_add_task)
 
-        // Création du LinearLayout principal pour afficher la tâche
-        val mainLayout = LinearLayout(parentLayout.context).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT
-            ).apply {
-                bottomMargin = 20.dpToPx()
-            }
-            orientation = LinearLayout.HORIZONTAL
-        }
+            dialog.findViewById<TextView>(R.id.titre).text = "Modifier la tâche"
 
-        // Création du CheckBox
-        val checkBox = CheckBox(parentLayout.context).apply {
-            id = View.generateViewId()
-            layoutParams = LinearLayout.LayoutParams(40.dpToPx(), 40.dpToPx())
-        }
+            // We add values in the spinner
+            val spinnerColor = dialog.findViewById<Spinner>(R.id.BtnColor)
 
-        // Création du LinearLayout vertical pour les TextViews
-        val textContainer = LinearLayout(parentLayout.context).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                0,
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1f
-            ).apply {
-                marginStart = 20.dpToPx()
-                marginEnd = 20.dpToPx()
-            }
-            orientation = LinearLayout.VERTICAL
-        }
-
-        // Création du TextView pour le nom de la tâche
-        val textNameTask = TextView(parentLayout.context).apply {
-            id = View.generateViewId()
-            text = taskName
-            textSize = 17f
-        }
-
-        // Création du TextView pour la description de la tâche
-        val textDesc = TextView(parentLayout.context).apply {
-            id = View.generateViewId()
-            text = taskDescription
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+            val color_items = listOf(
+                SpinnerItemColor(R.drawable.color_item_red, "red"),
+                SpinnerItemColor(R.drawable.color_item_orange, "orange"),
+                SpinnerItemColor(R.drawable.color_item_yellow, "yellow"),
+                SpinnerItemColor(R.drawable.color_item_green, "green"),
+                SpinnerItemColor(R.drawable.color_item_blue, "blue"),
+                SpinnerItemColor(R.drawable.color_item_purple, "purple")
             )
-        }
 
-        // Ajout des TextViews dans le LinearLayout vertical
-        textContainer.addView(textNameTask)
-        textContainer.addView(textDesc)
+            val adapter = SpinnerAdapterColor(requireContext(), color_items)
+            spinnerColor.adapter = adapter
 
-        // Création de l'ImageView pour la couleur de la tâche
-        val colorItem = ImageView(parentLayout.context).apply {
-            id = View.generateViewId()
-            layoutParams = LinearLayout.LayoutParams(30.dpToPx(), 30.dpToPx()).apply {
-                gravity = Gravity.CENTER
+            // We change the selected item to the color of the task
+            color_items.forEachIndexed() { index, color ->
+                if (color.text == task.color) {
+                    spinnerColor.setSelection(index)
+                }
+
             }
-            setImageResource(colorResId) // Définissez la couleur de l'image
-        }
 
-        // Ajout des éléments dans le LinearLayout principal
-        mainLayout.addView(checkBox)
-        mainLayout.addView(textContainer)
-        mainLayout.addView(colorItem)
+            // Add of items in the spinner
+            // Get the index of the type task's
+            val itemsArray = resources.getStringArray(R.array.item_dropdown_type)
+            val index = itemsArray.indexOf(task.type)
 
-        // Création de la vue de diviseur
-        val divider = View(parentLayout.context).apply {
-            id = View.generateViewId()
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                1.dpToPx() // Hauteur de 1dp, utilisez l'extension dpToPx pour la conversion
-            ).apply {
-                marginStart = 25.dpToPx()
-                marginEnd = 25.dpToPx()
+            val spinner = dialog.findViewById<Spinner>(R.id.typeTask)
+            ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.item_dropdown_type,
+                R.layout.item_spinner_type
+            ).also { adapter ->
+                adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+                spinner.adapter = adapter
             }
-            setBackgroundResource(R.color.grey)
-        }
+            spinner.setSelection(index)
 
-        // Ajouter le LinearLayout principal et le diviseur au parent
-        parentLayout.addView(mainLayout)
-        parentLayout.addView(divider)
+            val inputName = dialog.findViewById<TextView>(R.id.InputName)
+            val inputDesc = dialog.findViewById<TextView>(R.id.InputDesc)
+
+            inputName.text = task.name
+            inputDesc.text = task.description
+
+            val checkBoxMon = dialog.findViewById<CheckBox>(R.id.CheckMon)
+            val checkBoxTue = dialog.findViewById<CheckBox>(R.id.CheckTue)
+            val checkBoxWed = dialog.findViewById<CheckBox>(R.id.CheckWed)
+            val checkBoxThu = dialog.findViewById<CheckBox>(R.id.CheckThu)
+            val checkBoxFri = dialog.findViewById<CheckBox>(R.id.CheckFri)
+            val checkBoxSat = dialog.findViewById<CheckBox>(R.id.CheckSat)
+            val checkBoxSun = dialog.findViewById<CheckBox>(R.id.CheckSun)
+
+            task.days.forEach(){ day, value->
+                if (value == true){
+                    if(day == "monday") checkBoxMon.isChecked = true
+                    if(day == "tuesday") checkBoxTue.isChecked = true
+                    if(day == "wednesday") checkBoxWed.isChecked = true
+                    if(day == "thursday") checkBoxThu.isChecked = true
+                    if(day == "friday") checkBoxFri.isChecked = true
+                    if(day == "saturday") checkBoxSat.isChecked = true
+                    if(day == "sunday") checkBoxSun.isChecked = true
+                }
+            }
+
+            val arrayCheckBoxs = listOf(checkBoxMon, checkBoxTue, checkBoxWed, checkBoxThu, checkBoxFri, checkBoxSat, checkBoxSun)
+
+            // Pour chaque checkbox on récupère la valeur et on l'ajoute dans le dictionnaire
+            arrayCheckBoxs.forEach { checkBox->
+                checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                    task.days[checkBox.tag.toString()] = isChecked
+                }
+            }
+
+            dialog.findViewById<Button>(R.id.Add).setOnClickListener(){
+
+                // Récupérer les infos changées
+                // Tableau pour parcourir toutes les checkboxs
+                println(task.days)
+
+                task.name = inputName.text.toString()
+                task.description = inputDesc.text.toString()
+                task.color = color_items[spinnerColor.selectedItemPosition].text
+                task.type = spinner.selectedItem.toString()
+
+                // Mettre à jour les infos dans la bdd
+                val infoTask = mapOf(
+                    "name" to task.name,
+                    "type" to task.type,
+                    "description" to task.description,
+                    "color" to task.color,
+                    "validate" to task.validate,
+                    "days" to task.days
+                )
+
+                val childUpdate = hashMapOf<String, Any>(
+                    "/users/$userID/tasks/${task.key}" to infoTask
+                )
+
+                database.updateChildren(childUpdate)
+                    .addOnSuccessListener {
+                        Log.d("BDD", "Update de la task avec succès !")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d("BDD","Erreur lors de l'update : ${exception.message}")
+                    }
+                dialog.dismiss()
+            }
+
+            dialog.findViewById<ImageButton>(R.id.Supp).setOnClickListener(){
+                // Supprimer la tâche dans la base de donnée
+                database.child("users").child("$userID").child("tasks").child(task.key).removeValue()
+                    .addOnSuccessListener {
+                        Log.d("BDD", "Delete de la task avec succès !")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d("BDD","Erreur lors de la suppression : ${exception.message}")
+                    }
+
+                dialog.dismiss()
+            }
+
+
+            dialog.show()
+        }
     }
 }
