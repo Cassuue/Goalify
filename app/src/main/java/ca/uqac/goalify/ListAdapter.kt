@@ -46,35 +46,6 @@ class ListAdapter(context: Context, dataArrayList: ArrayList<Task?>?, private va
             colorItem.setImageResource(color)
         }
 
-        val checkBox = view.findViewById<CheckBox>(R.id.validTask)
-        checkBox.isChecked = listData!!.validate
-
-        if(checkBox.isChecked){
-            nameTask.paintFlags = nameTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-        } else{
-            nameTask.paintFlags = nameTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-        }
-
-        checkBox.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked){
-                nameTask.paintFlags = nameTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            } else{
-                nameTask.paintFlags = nameTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-            }
-            listData.validate = isChecked
-            val childUpdate = hashMapOf<String, Any>(
-                "/users/$userID/tasks/${listData.key}/validate" to listData.validate
-            )
-
-            database.updateChildren(childUpdate)
-                .addOnSuccessListener {
-                    Log.d("BDD", "Update de la task avec succès !")
-                }
-                .addOnFailureListener { exception ->
-                    Log.d("BDD","Erreur lors de l'update : ${exception.message}")
-                }
-        }
-
         return view
     }
 }

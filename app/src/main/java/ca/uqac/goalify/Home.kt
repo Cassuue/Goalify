@@ -1,24 +1,19 @@
 package ca.uqac.goalify
 
 import android.app.Dialog
-import android.content.res.Resources
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
@@ -26,11 +21,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.Exclude
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -66,8 +61,11 @@ class Home : Fragment() {
 
         // Pattern complet : d MMM yyyy, EEE, HH:mm:ss z
         // TODO : modifier selon langue/tel
-        val dateFormat = SimpleDateFormat("EEE")
+        val locale = Locale.ENGLISH
+        val dateFormat = SimpleDateFormat("EEE", locale)
         val day = dateFormat.format(Date())
+
+        println(day)
 
         val today = when (day) {
             "Mon" -> "monday"
@@ -104,7 +102,6 @@ class Home : Fragment() {
                         val taskSun = taskSnapshot.child("days").child("sunday").value.toString()
                         val taskValid = taskSnapshot.child("validate").value.toString() == "true"
 
-
                         var list_Days = mutableMapOf(
                             "monday" to (taskMon == "true"),
                             "tuesday" to (taskTue == "true"),
@@ -124,6 +121,21 @@ class Home : Fragment() {
                     listAdapter = ListAdapter(requireContext(), dataArrayList, userUid)
                     listView.adapter = listAdapter
                     listView.isClickable = true
+
+                    listView.setOnItemClickListener { parent, view, position, id ->
+                        val selectedItem = dataArrayList[position]
+                        if(selectedItem != null){
+                            selectedItem.validate = if(selectedItem.validate) false else true
+                            view.findViewById<CheckBox>(R.id.validTask).isChecked = selectedItem.validate
+                            val nameTask = view.findViewById<TextView>(R.id.textNameTask)
+                            if(selectedItem.validate){
+                                nameTask.paintFlags = nameTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                            } else{
+                                nameTask.paintFlags = nameTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                            }
+                        }
+                        true
+                    }
 
                     // Event listener for update tasks
                     listView.setOnItemLongClickListener { parent, view, position, id ->
@@ -156,7 +168,7 @@ class Home : Fragment() {
         if (task != null) {
 
             val dialog = Dialog(requireContext())
-            dialog.setContentView(R.layout.dialog_add_task)
+            dialog.setContentView(R.layout.dialog_modif_task)
 
             dialog.findViewById<TextView>(R.id.titre).text = "Modifier la tâche"
 
@@ -251,7 +263,7 @@ class Home : Fragment() {
                     "type" to task.type,
                     "description" to task.description,
                     "color" to task.color,
-                    "validate" to task.validate,
+                    //"validate" to task.validate,
                     "days" to task.days
                 )
 
