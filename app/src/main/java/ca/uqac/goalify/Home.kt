@@ -65,6 +65,7 @@ class Home : Fragment() {
         database = Firebase.database.reference
 
         // Pattern complet : d MMM yyyy, EEE, HH:mm:ss z
+        // TODO : modifier selon langue/tel
         val dateFormat = SimpleDateFormat("EEE")
         val day = dateFormat.format(Date())
 
