@@ -14,8 +14,11 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 
-class ListAdapter(context: Context, dataArrayList: ArrayList<Task?>?, private val userID: String?) :
+class ListAdapter(context: Context, dataArrayList: ArrayList<Task?>?,
+                  private val userID: String?, private val calendar: Boolean) :
+
     ArrayAdapter<Task?>(context, R.layout.list_view_tasks, dataArrayList!!) {
+
     private lateinit var database: DatabaseReference
 
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
@@ -44,6 +47,14 @@ class ListAdapter(context: Context, dataArrayList: ArrayList<Task?>?, private va
                 else -> R.drawable.color_item_red
             }
             colorItem.setImageResource(color)
+        }
+
+        val checkBox = view.findViewById<CheckBox>(R.id.validTask)
+
+        if(calendar){
+            checkBox.visibility = View.GONE
+        } else{
+            checkBox.visibility = View.VISIBLE
         }
 
         return view
