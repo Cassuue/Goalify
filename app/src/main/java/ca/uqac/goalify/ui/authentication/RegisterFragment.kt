@@ -1,33 +1,39 @@
-package ca.uqac.goalify
+package ca.uqac.goalify.ui.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import ca.uqac.goalify.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
+import ca.uqac.goalify.R
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_register, container, false)
 
         // Initialisation de Firebase Auth
         auth = FirebaseAuth.getInstance()
 
         // Récupération des éléments de la vue
-        val emailField = findViewById<EditText>(R.id.etRegisterEmail)
-        val passwordField = findViewById<EditText>(R.id.etRegisterPassword)
-        val confirmPasswordField = findViewById<EditText>(R.id.etConfirmPassword)
-        val createAccountButton = findViewById<Button>(R.id.btnCreateAccount)
-        val backToLoginText = findViewById<TextView>(R.id.tvBackToLogin)
+        val emailField = view.findViewById<EditText>(R.id.etRegisterEmail)
+        val passwordField = view.findViewById<EditText>(R.id.etRegisterPassword)
+        val confirmPasswordField = view.findViewById<EditText>(R.id.etConfirmPassword)
+        val createAccountButton = view.findViewById<Button>(R.id.btnCreateAccount)
+        val backToLoginText = view.findViewById<TextView>(R.id.tvBackToLogin)
 
         // Créer un compte
         createAccountButton.setOnClickListener {
@@ -36,11 +42,11 @@ class RegisterActivity : AppCompatActivity() {
             val confirmPassword = confirmPasswordField.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
             } else if (password.length < 6) {
-                Toast.makeText(this, "Le mot de passe doit contenir au moins 6 caractères", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Le mot de passe doit contenir au moins 6 caractères", Toast.LENGTH_SHORT).show()
             } else if (password != confirmPassword) {
-                Toast.makeText(this, "Les mots de passe ne correspondent pas", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Les mots de passe ne correspondent pas", Toast.LENGTH_SHORT).show()
             } else {
                 createAccount(email, password)
 
@@ -48,7 +54,7 @@ class RegisterActivity : AppCompatActivity() {
                 val uid = auth.currentUser?.uid
                 println("UID de l'utilisateur connecté : $uid")
 
-                val userRef =  database.reference.child("users").child(auth.currentUser?.uid ?: "")
+                val userRef = database.reference.child("users").child(auth.currentUser?.uid ?: "")
                 userRef.setValue("${auth.currentUser?.displayName}")
                     .addOnSuccessListener {
                         println("Données de l'utilisateur enregistrées !")
@@ -61,28 +67,28 @@ class RegisterActivity : AppCompatActivity() {
 
         // Retour à la page de connexion
         backToLoginText.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            requireActivity().onBackPressed()
         }
+
+        return view
     }
 
     private fun createAccount(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
+            .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     updateUI(auth.currentUser)
                 } else {
-                    Toast.makeText(this, "Échec de la création de compte : ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Échec de la création de compte : ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
-            Toast.makeText(this, "Compte créé avec succès!", Toast.LENGTH_SHORT).show()
-            // Rediriger vers l'activité principale après création du compte
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+            Toast.makeText(requireContext(), "Compte créé avec succès!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireActivity(), MainActivity::class.java))
+            requireActivity().finish()
         }
     }
 }
