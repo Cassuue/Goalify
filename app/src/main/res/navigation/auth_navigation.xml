@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <!-- Fragment de connexion -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="ca.uqac.goalify.ui.auth.LoginFragment"
+        android:label="Connexion"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+    </fragment>
+
+    <!-- Fragment d'inscription -->
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="ca.uqac.goalify.ui.auth.RegisterFragment"
+        android:label="Inscription"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+
+    <!-- Fragment de réinitialisation du mot de passe -->
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="ca.uqac.goalify.ui.auth.ForgotPasswordFragment"
+        android:label="Réinitialisation du mot de passe"
+        tools:layout="@layout/fragment_forgot_password">
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+</navigation>

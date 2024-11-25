@@ -4,29 +4,28 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import ca.uqac.goalify.databinding.ActivityMainBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val navView: BottomNavigationView = binding.navView
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+
+        navView.setupWithNavController(navController)
 
         // On définit la langue de base de l'application en français
         val locale = Locale("fr")
@@ -35,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
 
-
         // NOTIFICATIONS
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -43,83 +41,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        if (!isUserLoggedIn())
+            startActivity(Intent(this, AuthActivity::class.java))
 
-        enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate(layoutInflater)
 
-        auth = FirebaseAuth.getInstance()
-
-        val currentUser = auth.currentUser
-        if (currentUser == null) { // TODO: Change !== to ==
-            // User is not signed in
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-        } else {
-            // User is signed in
-            setContentView(binding.root)
-            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-                insets
-            }
-
-            // Add the fragment home to the main page
-            replaceFragment(Home())
-
-            // Change the fragment depend which item is selected
-            binding.bottomNavigationView.setOnItemSelectedListener {
-                val currentFragment = supportFragmentManager.findFragmentById(R.id.frameLayout)
-                if (currentFragment is AddTask && currentFragment.shouldWarnOnExit()) {
-                    currentFragment.showWarning {
-                        when (it.itemId) {
-
-                            R.id.home -> replaceFragment(Home())
-                            R.id.rewards -> replaceFragment(RewardsFragment())
-                            R.id.calendar -> replaceFragment(Calendar())
-
-                            else -> {
-
-                            }
-                        }
-                        true
-                    }
-                    false
-                }
-                else{
-                    when (it.itemId) {
-
-                        R.id.home -> replaceFragment(Home())
-                        R.id.rewards -> replaceFragment(RewardsFragment())
-                        R.id.calendar -> replaceFragment(Calendar())
-
-                        else -> {
-
-                        }
-                    }
+        binding.materialToolBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.item_profile -> {
+                    navController.navigate(R.id.navigation_profile)
                     true
                 }
-            }
-
-            binding.materialToolBar.setOnMenuItemClickListener(){
-                when (it.itemId){
-                    R.id.profile -> replaceFragment(Profile())
-                    else -> {
-
-                    }
-                }
-                true
+                else -> false
             }
         }
-
-
     }
 
-     private fun replaceFragment(fragment : Fragment){
-
-         val fragmentManager = supportFragmentManager
-         val fragmentTransation = fragmentManager.beginTransaction()
-         fragmentTransation.replace(R.id.frameLayout, fragment)
-         fragmentTransation.commit()
-     }
-
+    private fun isUserLoggedIn(): Boolean {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        return currentUser != null
+    }
 }

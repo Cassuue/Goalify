@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "ca.uqac.goalify"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "ca.uqac.goalify"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -48,13 +48,19 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.glide)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation(libs.play.services.auth)
+    implementation(libs.androidx.work.runtime.ktx)
+
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
 }
