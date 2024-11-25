@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -93,14 +94,7 @@ class Home : Fragment() {
         val btn: FloatingActionButton = view.findViewById(R.id.AddTask)
 
         btn.setOnClickListener() {
-            // Crée une instance du FragmentAddTask
-            val fragmentAddTask = AddTask()
-
-            // Utilise FragmentTransaction pour remplacer le fragment actuel par le framgment_add_task
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.frameLayout, fragmentAddTask)
-                .addToBackStack(null)
-                .commit()
+            findNavController().navigate(R.id.navigation_add_task)
         }
 
     }

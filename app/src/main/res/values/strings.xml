@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">Goalify</string>
-    <string name="default_web_client_id">token google</string>
+    <string name="default_client_id">534920273944-s7sinem22bqeqpmvq36mv38gb9nvrtle.apps.googleusercontent.com</string>
+    <string name="title_register">Register</string>
+    <string name="title_login">Login</string>
+    <string name="title_rewards">Rewards</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_add_task">Add Task</string>
+    <string name="title_home">Home</string>
+    <string name="title_profile">Profile</string>
+    <string name="calendar">Calendar</string>
+    <string name="home">Home</string>
+    <string name="rewards">Rewards</string>
+    <string name="profile">Profile</string>
+    <string name="forgot_password">Mot de passe oublié</string>
+    <string name="enter_email">Entrez l\'email</string>
+    <string name="email">Email</string>
+    <string name="send_reset_link">send reset link</string>
 </resources>

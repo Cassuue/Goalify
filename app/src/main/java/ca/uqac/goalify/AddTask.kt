@@ -12,6 +12,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -140,13 +141,7 @@ class AddTask : Fragment() {
                 checkBox.isChecked = false
             }
 
-            val fragmentHome = Home()
-
-            // Utilise FragmentTransaction pour remplacer le fragment actuel par le framgment_add_task
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.frameLayout, fragmentHome)
-                .addToBackStack(null)
-                .commit()
+            findNavController().navigate(R.id.navigation_home)
         }
     }
 
