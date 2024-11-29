@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_feed"
+        android:name="ca.uqac.goalify.Feed"
+        android:label="@string/title_feed"
+        tools:layout="@layout/fragment_feed" />
+
+    <fragment
         android:id="@+id/navigation_profile"
         android:name="ca.uqac.goalify.ui.profile.Profile"
         android:label="@string/title_profile"
