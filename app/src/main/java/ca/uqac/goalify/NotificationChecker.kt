@@ -2,6 +2,7 @@ package ca.uqac.goalify
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -66,6 +67,16 @@ class NotificationChecker(context: Context, params: WorkerParameters) : Coroutin
         val channelId = "firebase_task_channel"
         val channelName = "Firebase Task Channel"
 
+        // Crée l'intent pour lancer l'application
+        val intent = applicationContext.packageManager.getLaunchIntentForPackage(applicationContext.packageName)
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Gestionnaire de notifications
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -73,13 +84,18 @@ class NotificationChecker(context: Context, params: WorkerParameters) : Coroutin
             notificationManager.createNotificationChannel(channel)
         }
 
+        // PendingIntent
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true) // Ferme automatiquement la notification lorsque l'utilisateur clique dessus
             .build()
 
+        // Affiche la notification
         notificationManager.notify(1, notification)
     }
+
 }
