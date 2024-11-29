@@ -42,7 +42,8 @@ class NotificationChecker(context: Context, params: WorkerParameters) : Coroutin
                 val days = taskSnapshot.child("days").child(currentDay).getValue(Boolean::class.java) ?: false
                 if (days) {
                     val taskColor = taskSnapshot.child("color").getValue(String::class.java) ?: "Aucune couleur"
-                    sendNotification("Tâche pour aujourd'hui", "Une tâche de couleur $taskColor est prévue aujourd'hui.")
+                    val taskType = taskSnapshot.child("name").getValue(String::class.java) ?: "Tâche inconnue"
+                    sendNotification("Goalify", "Il est l'heure d'effectuer votre tâche: $taskType")
                     taskFound = true
                     break
                 }
@@ -50,7 +51,7 @@ class NotificationChecker(context: Context, params: WorkerParameters) : Coroutin
 
             if (!taskFound) {
                 Log.d("NotificationChecker", "Aucune tâche pour aujourd'hui.")
-                sendNotification("Aucune tâche pour aujourd'hui","Lancez Goalify pour commencer une streak!")
+                // DEBUG: sendNotification("Aucune tâche pour aujourd'hui","Lancez Goalify pour commencer une streak!")
             }
 
         } catch (e: Exception) {
