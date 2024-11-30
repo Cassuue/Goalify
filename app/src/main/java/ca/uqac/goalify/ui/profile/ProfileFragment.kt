@@ -54,11 +54,18 @@ class ProfileFragment : Fragment() {
             binding.profileEmail.text = email
         })
 
+        profileViewModel.reloadProfilePhoto.observe(viewLifecycleOwner, Observer { shouldReload ->
+            if (shouldReload == true) {
+                loadProfilePhoto(userId = currentUser?.uid ?: "")
+                profileViewModel.onProfilePhotoReloaded()
+            }
+        })
+
         // Afficher les informations de l'utilisateur
         currentUser?.let { user ->
             profileViewModel.updateProfile(user.displayName ?: "", user.email ?: "")
-            // Charger la photo de profil si disponible
-            loadProfilePhoto(user.uid)
+            // Charger la photo de profil si disponible TODO: Peut être plus besoin, donc à enlever
+            //loadProfilePhoto(user.uid)
 
             // Charger l'objectif de l'utilisateur
             loadUserObjective(user.uid)
@@ -127,6 +134,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadProfilePhoto(userId: String) {
+        val currentUser = auth.currentUser
         val file = File(context?.filesDir, "profile_image_$userId.jpg")
         if (file.exists()) {
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)

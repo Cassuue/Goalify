@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,7 +14,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import ca.uqac.goalify.R
 import ca.uqac.goalify.databinding.DialogEditProfileBinding
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,6 +59,8 @@ class EditProfileDialogFragment : DialogFragment() {
             originalEmail = user.email
             binding.editName.setText(originalName)
             binding.editEmail.setText(originalEmail)
+            // Charger la photo de profil actuelle
+            loadProfilePhoto(user.uid)
         }
 
         // Sélectionner une photo
@@ -90,7 +95,17 @@ class EditProfileDialogFragment : DialogFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
             selectedImageUri = data.data
+            // Afficher la photo sélectionnée
+            binding.profileImageView.setImageURI(selectedImageUri)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val params = dialog?.window?.attributes
+        params?.width = ViewGroup.LayoutParams.MATCH_PARENT
+        params?.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog?.window?.attributes = params as android.view.WindowManager.LayoutParams
     }
 
     private fun updateProfile(newName: String, newEmail: String) {
@@ -150,6 +165,22 @@ class EditProfileDialogFragment : DialogFragment() {
             } catch (e: IOException) {
                 e.printStackTrace()
                 showToast("Erreur lors de l'enregistrement de la photo de profil")
+            }
+        }
+    }
+
+    private fun loadProfilePhoto(userId: String) {
+        val currentUser = auth.currentUser
+        val file = File(context?.filesDir, "profile_image_$userId.jpg")
+        if (file.exists()) {
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            binding.profileImageView.setImageBitmap(bitmap)
+        } else {
+            // Charger la photo de profil de l'utilisateur (Google ou placeholder)
+            currentUser?.photoUrl?.let { photoUrl ->
+                Glide.with(this).load(photoUrl).into(binding.profileImageView)
+            } ?: run {
+                binding.profileImageView.setImageResource(R.drawable.profile_placeholder)
             }
         }
     }
