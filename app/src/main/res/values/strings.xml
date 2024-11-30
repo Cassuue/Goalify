@@ -28,4 +28,5 @@
     <string name="name">Nom</string>
     <string name="define_objective">Définir votre objectif</string>
     <string name="section_params">Paramètres</string>
+    <string name="back">back</string>
 </resources>
