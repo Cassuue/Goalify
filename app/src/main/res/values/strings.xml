@@ -16,4 +16,17 @@
     <string name="enter_email">Entrez l\'email</string>
     <string name="email">Email</string>
     <string name="send_reset_link">send reset link</string>
+    <string name="profile_image">Profile picture</string>
+    <string name="save_objective">Save objective</string>
+    <string name="edit_objective">edit objective</string>
+    <string name="activer_les_notifications">Activer les notifications</string>
+    <string name="activier_l_utilisation_de_l_ia">Activier l\'utilisation de l\'IA</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="delete_account">Supprimer le compte</string>
+    <string name="ssection_objectif">Objectif</string>
+    <string name="update_profile">Mettre à jour le profil</string>
+    <string name="name">Nom</string>
+    <string name="define_objective">Définir votre objectif</string>
+    <string name="section_params">Paramètres</string>
+    <string name="back">back</string>
 </resources>

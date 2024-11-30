@@ -9,11 +9,12 @@
         android:id="@+id/navigation_home"
         android:name="ca.uqac.goalify.Home"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="ca.uqac.goalify.ui.profile.Profile"
+        android:name="ca.uqac.goalify.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 
@@ -27,12 +28,14 @@
         android:id="@+id/navigation_calendar"
         android:name="ca.uqac.goalify.Calendar"
         android:label="@string/title_calendar"
-        tools:layout="@layout/fragment_calendar" />
+        tools:layout="@layout/fragment_calendar">
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_rewards"
         android:name="ca.uqac.goalify.RewardsFragment"
         android:label="@string/title_rewards"
-        tools:layout="@layout/fragment_rewards" />
+        tools:layout="@layout/fragment_rewards">
+    </fragment>
 
 </navigation>
