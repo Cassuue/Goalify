@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import ca.uqac.goalify.AuthActivity
 import ca.uqac.goalify.R
 import ca.uqac.goalify.databinding.FragmentProfileBinding
+import ca.uqac.goalify.ui.reward.RewardsManager
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -64,9 +65,6 @@ class ProfileFragment : Fragment() {
         // Afficher les informations de l'utilisateur
         currentUser?.let { user ->
             profileViewModel.updateProfile(user.displayName ?: "", user.email ?: "")
-            // Charger la photo de profil si disponible TODO: Peut être plus besoin, donc à enlever
-            //loadProfilePhoto(user.uid)
-
             // Charger l'objectif de l'utilisateur
             loadUserObjective(user.uid)
         }
@@ -180,6 +178,9 @@ class ProfileFragment : Fragment() {
                 binding.objectiveEditText.visibility = View.GONE
                 binding.editObjectiveButton.setImageResource(R.drawable.ic_edit)
                 isEditingObjective = false
+
+                // Vérifier et débloquer les récompenses
+                RewardsManager.checkAndUnlockRewards(user.uid, 2, requireContext())
             }.addOnFailureListener {
                 Toast.makeText(context, "Erreur lors de l'enregistrement de l'objectif", Toast.LENGTH_SHORT).show()
             }
