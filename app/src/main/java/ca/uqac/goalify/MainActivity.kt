@@ -1,15 +1,22 @@
 package ca.uqac.goalify
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import ca.uqac.goalify.databinding.ActivityMainBinding
+import ca.uqac.goalify.ui.reward.Reward
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.InputStreamReader
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -57,6 +64,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Importer les récompenses du fichier JSON dans Firestore
+        importRewardsFromJsonToFirestore(this)
+
         if (!isUserLoggedIn())
             startActivity(Intent(this, AuthActivity::class.java))
 
@@ -73,5 +83,35 @@ class MainActivity : AppCompatActivity() {
     private fun isUserLoggedIn(): Boolean {
         val currentUser = FirebaseAuth.getInstance().currentUser
         return currentUser != null
+    }
+
+    fun importRewardsFromJsonToFirestore(context: Context) {
+        val firestore = FirebaseFirestore.getInstance()
+        try {
+            val inputStream = context.assets.open("rewards.json")
+            val reader = InputStreamReader(inputStream)
+            val gson = Gson()
+            val rewardsType = object : TypeToken<List<Reward>>() {}.type
+            val rewards: List<Reward> = gson.fromJson(reader, rewardsType)
+
+            for (reward in rewards) {
+                val rewardData = hashMapOf(
+                    "title" to reward.title,
+                    "subtitle" to reward.subtitle,
+                    "imageUrl" to reward.imageUrl,
+                    "isUnlocked" to reward.isUnlocked,
+                    "isHidden" to reward.isHidden
+                )
+                firestore.collection("rewards").document(reward.id.toString()).set(rewardData)
+                    .addOnSuccessListener {
+                        Log.d("FirestoreImport", "Successfully imported reward: ${reward.title}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("FirestoreImport", "Error importing reward: ${reward.title}", e)
+                    }
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreImport", "Error reading rewards.json", e)
+        }
     }
 }

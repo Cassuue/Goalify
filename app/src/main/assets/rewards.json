@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Marathon Finisher",
+    "subtitle": "Gold Medal\nCity Marathon • Winner",
+    "imageUrl": "marathon_finisher.jpg",
+    "isUnlocked": true,
+    "isHidden": false
+  },
+  {
+    "id": 2,
+    "title": "Top Scorer",
+    "subtitle": "Silver Medal\nBasketball League • Winner",
+    "imageUrl": "top_scorer.jpg",
+    "isUnlocked": false,
+    "isHidden": false
+  },
+  {
+    "id": 3,
+    "title": "Chess Champion",
+    "subtitle": "Bronze Medal\nChess Club • Nominee",
+    "imageUrl": "chess_champion.jpg",
+    "isUnlocked": false,
+    "isHidden": false
+  },
+  {
+    "id": 4,
+    "title": "Secret Reward 1",
+    "subtitle": "Details hidden",
+    "imageUrl": "secret_reward_1.jpg",
+    "isUnlocked": false,
+    "isHidden": true
+  },
+  {
+    "id": 5,
+    "title": "Secret Reward 2",
+    "subtitle": "Details hidden",
+    "imageUrl": "secret_reward_2.jpg",
+    "isUnlocked": false,
+    "isHidden": true
+  }
+]

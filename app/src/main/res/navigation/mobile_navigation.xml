@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/navigation_rewards"
-        android:name="ca.uqac.goalify.RewardsFragment"
+        android:name="ca.uqac.goalify.ui.reward.RewardsFragment"
         android:label="@string/title_rewards"
         tools:layout="@layout/fragment_rewards">
     </fragment>
