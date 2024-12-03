@@ -7,9 +7,11 @@
     <string name="title_calendar">Calendar</string>
     <string name="title_add_task">Add Task</string>
     <string name="title_home">Home</string>
+    <string name="title_forum">Forum</string>
     <string name="title_profile">Profile</string>
     <string name="calendar">Calendar</string>
     <string name="home">Home</string>
+    <string name="forum">Forum</string>
     <string name="rewards">Rewards</string>
     <string name="profile">Profile</string>
     <string name="forgot_password">Mot de passe oublié</string>

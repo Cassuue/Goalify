@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/forum_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Forum Title"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/forum_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Author"
+        android:textSize="14sp"
+        android:textColor="#555" />
+
+    <TextView
+        android:id="@+id/forum_created_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Created at"
+        android:textSize="12sp"
+        android:textColor="#777" />
+
+    <TextView
+        android:id="@+id/forum_comments_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Comments: 0"
+        android:textSize="14sp"
+        android:textColor="#555" />
+
+</LinearLayout>

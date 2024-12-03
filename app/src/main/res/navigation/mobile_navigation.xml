@@ -13,6 +13,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/navigation_forum"
+        android:name="ca.uqac.goalify.ForumListFragment"
+        android:label="@string/title_forum"
+        tools:layout="@layout/fragment_forum" />
+
+    <fragment
         android:id="@+id/navigation_profile"
         android:name="ca.uqac.goalify.ui.profile.ProfileFragment"
         android:label="@string/title_profile"

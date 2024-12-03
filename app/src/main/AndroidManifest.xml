@@ -30,6 +30,8 @@
             android:name=".AuthActivity"
             android:exported="true" />
 
+        <activity android:name=".ThreadDetailActivity" />
+
         <receiver android:name=".BootReceiver"
             android:exported="true"
             android:enabled="true">
