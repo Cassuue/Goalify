@@ -1,6 +1,7 @@
 package ca.uqac.goalify
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +29,11 @@ class ForumAdapter(context: Context, private val forums: List<Forum>) :
 
         // Ajouter un clic sur l'élément de la liste
         view.setOnClickListener {
-            // Afficher un toast avec le titre du forum lorsque l'élément est cliqué
-            Toast.makeText(context, "Forum clicked: ${forum?.title}", Toast.LENGTH_SHORT).show()
+            forum?.let {
+                val intent = Intent(context, ThreadDetailActivity::class.java)
+                intent.putExtra("THREAD_DOCUMENT_ID", forum.documentId)
+                context.startActivity(intent)
+            } ?: Toast.makeText(context, "Forum introuvable", Toast.LENGTH_SHORT).show()
         }
 
         return view

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.uqac.goalify.databinding.FragmentForumListBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -59,7 +60,10 @@ class ForumListFragment : Fragment() {
                     val commentsCount = document.get("comments") as? List<*> ?: emptyList<Any>()
                     val commentsCountValue = commentsCount.size
 
-                    forumList.add(Forum(title, author, createdAt, commentsCountValue))
+                    forumList.add(Forum(
+                        title, author, createdAt, commentsCountValue,
+                        documentId = document.id
+                    ))
                 }
 
                 forumAdapter = ForumAdapter(requireContext(), forumList)
@@ -117,7 +121,7 @@ class ForumListFragment : Fragment() {
             "title" to title,
             "content" to content,
             "author" to userEmail.substringBefore('@'),
-            "created_at" to com.google.firebase.Timestamp.now(),
+            "created_at" to Timestamp.now(),
             "visible" to true
         )
 
