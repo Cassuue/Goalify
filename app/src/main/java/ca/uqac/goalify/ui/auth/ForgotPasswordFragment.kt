@@ -4,37 +4,48 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import ca.uqac.goalify.R
-import ca.uqac.goalify.databinding.FragmentForgotPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class ForgotPasswordFragment : Fragment() {
 
-    private lateinit var binding: FragmentForgotPasswordBinding
+    private lateinit var auth: FirebaseAuth
+    private lateinit var emailEditText: EditText
+    private lateinit var resetPasswordButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentForgotPasswordBinding.inflate(inflater, container, false)
+        val view = inflater.inflate(R.layout.fragment_forgot_password, container, false)
+        emailEditText = view.findViewById(R.id.emailEditText)
+        resetPasswordButton = view.findViewById(R.id.resetPasswordButton)
+        auth = FirebaseAuth.getInstance()
 
-        binding.sendEmailButton.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-
-            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(requireContext(), "Email envoyé pour réinitialisation", Toast.LENGTH_SHORT).show()
-                        findNavController().navigate(R.id.action_forgotPasswordFragment_to_loginFragment)
-                    } else {
-                        Toast.makeText(requireContext(), "Erreur lors de l'envoi de l'email", Toast.LENGTH_SHORT).show()
-                    }
-                }
+        resetPasswordButton.setOnClickListener {
+            val email = emailEditText.text.toString().trim()
+            if (email.isNotEmpty()) {
+                resetPassword(email)
+            } else {
+                Toast.makeText(context, "Please enter your email", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        return binding.root
+        return view
+    }
+
+    private fun resetPassword(email: String) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(context, "Password reset email sent!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to send reset email", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }
