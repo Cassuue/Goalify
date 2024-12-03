@@ -1,6 +1,7 @@
 package ca.uqac.goalify
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
@@ -16,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ThreadDetailActivity : AppCompatActivity() {
@@ -86,40 +88,51 @@ class ThreadDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Le commentaire est vide.", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-        // Initialisation de la barre de navigation
-        val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main)
-        bottomNavigationView.setupWithNavController(navController)
     }
 
     private fun loadComments(threadDocumentId: String) {
-        db.collection("forum").document(threadDocumentId).collection("comments")
-            .get()
-            .addOnSuccessListener { documents ->
-                val comments = documents.map { it.getString("content") ?: "" }
-                commentsRecyclerView.adapter = CommentsAdapter(comments)
+        db.collection("forum").document(threadDocumentId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val commentsList = document.get("comments") as? List<Map<String, Any>> ?: emptyList()
+                    val comments = commentsList.map { commentData ->
+                        val author = commentData["author"] as? String ?: "Inconnu"
+                        val content = commentData["comment"] as? String ?: "Pas de contenu"
+                        "$author: $content"
+                    }
+                    commentsRecyclerView.adapter = CommentsAdapter(comments)
+                } else {
+                    Toast.makeText(this, "Thread introuvable.", Toast.LENGTH_SHORT).show()
+                }
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Erreur: Impossible de charger les commentaires.", Toast.LENGTH_SHORT).show()
             }
     }
 
+
     private fun addComment(threadDocumentId: String, comment: String) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userEmail = currentUser?.email ?: "Anonyme (voir les erreurs)"
+
         val commentData = mapOf(
-            "content" to comment,
+            "comment" to comment,
+            "author" to userEmail.substringBefore('@'),
             "created_at" to com.google.firebase.Timestamp.now()
         )
-        db.collection("forum").document(threadDocumentId).collection("comments")
-            .add(commentData)
+
+        db.collection("forum").document(threadDocumentId)
+            .update("comments", com.google.firebase.firestore.FieldValue.arrayUnion(commentData))
             .addOnSuccessListener {
                 Toast.makeText(this, "Commentaire ajouté avec succès.", Toast.LENGTH_SHORT).show()
                 commentInput.text.clear()
-                loadComments(threadDocumentId) // Recharger les commentaires
+                loadComments(threadDocumentId)
             }
-            .addOnFailureListener {
+            .addOnFailureListener { e ->
                 Toast.makeText(this, "Erreur: Impossible d'ajouter le commentaire.", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
             }
     }
+
+
 }
