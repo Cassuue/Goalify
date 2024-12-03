@@ -13,16 +13,28 @@ import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.database
 
+private const val ARG_TITLE = "taskTitle"
+
+
 class AddTask : Fragment() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private var title: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            title = it.getString(ARG_TITLE)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,19 +44,26 @@ class AddTask : Fragment() {
         return inflater.inflate(R.layout.fragment_add_task, container, false)
     }
 
+    companion object {
+        @JvmStatic
+        fun newInstance(title: String) =
+            AddTask().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_TITLE, title)
+                }
+            }
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Ajout des items dans le spinner
-        val spinner = view.findViewById<Spinner>(R.id.typeTask)
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.item_dropdown_type,
-            R.layout.item_spinner_type
-        ).also { adapter ->
-            adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-            spinner.adapter = adapter
+        val inputName = view.findViewById<EditText>(R.id.InputName)
+
+        if(title != null){
+            inputName.setText(title)
         }
+
         // Initialiser FirebaseAuth
         auth = FirebaseAuth.getInstance()
 
@@ -64,7 +83,6 @@ class AddTask : Fragment() {
             SpinnerItemColor(R.drawable.color_item_blue, "blue"),
             SpinnerItemColor(R.drawable.color_item_purple, "purple")
         )
-
 
         val adapter = SpinnerAdapterColor(requireContext(), color_items)
         spinnerColor.adapter = adapter
@@ -104,9 +122,9 @@ class AddTask : Fragment() {
         btnAdd.setOnClickListener(){
 
             // On récupère les valeurs des champs
-            val inputName = view.findViewById<EditText>(R.id.InputName).text.toString()
+            val taskName = inputName.text.toString()
+
             val inputDesc = view.findViewById<EditText>(R.id.InputDesc).text.toString()
-            val selectedType = spinner.selectedItem.toString()
 
             val positionSelectedColor = spinnerColor.selectedItemPosition
             val selectedColor = color_items[positionSelectedColor].text.toString()
@@ -114,8 +132,7 @@ class AddTask : Fragment() {
             val newtask = database.child("users").child(userUid.toString()).child("tasks").push()
 
             val task = mapOf(
-                "name" to inputName,
-                "type" to selectedType,
+                "name" to taskName,
                 "color" to selectedColor,
                 "description" to inputDesc,
                 "validate" to false,
@@ -132,7 +149,6 @@ class AddTask : Fragment() {
 
 
             // Réinitialisation des champs du formulaire
-            spinner.setSelection(0)
             spinnerColor.setSelection(0)
             view.findViewById<EditText>(R.id.InputName).setText("")
             view.findViewById<EditText>(R.id.InputDesc).setText("")

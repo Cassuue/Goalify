@@ -31,4 +31,7 @@
     <string name="define_objective">Définir votre objectif</string>
     <string name="section_params">Paramètres</string>
     <string name="back">back</string>
+    <string name="title_propositions">Propositions Task</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

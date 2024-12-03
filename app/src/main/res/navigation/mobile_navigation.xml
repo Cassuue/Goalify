@@ -28,7 +28,12 @@
         android:id="@+id/navigation_add_task"
         android:name="ca.uqac.goalify.AddTask"
         android:label="@string/title_add_task"
-        tools:layout="@layout/fragment_add_task" />
+        tools:layout="@layout/fragment_add_task">
+        <argument
+            android:name="taskTitle"
+            app:argType="string" />
+    </fragment>
+
 
     <fragment
         android:id="@+id/navigation_calendar"
@@ -43,5 +48,10 @@
         android:label="@string/title_rewards"
         tools:layout="@layout/fragment_rewards">
     </fragment>
+    <fragment
+        android:id="@+id/navigation_propositions_tasks"
+        android:name="ca.uqac.goalify.PropositionsTasks"
+        android:label="@string/title_propositions"
+        tools:layout="@layout/fragment_propositions_tasks" />
 
 </navigation>

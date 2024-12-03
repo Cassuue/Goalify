@@ -37,8 +37,6 @@ import java.util.Locale
 import java.util.Calendar
 
 
-// TODO: Rename parameter arguments, choose names that match
-
 class Home : Fragment() {
 
     private lateinit var database: DatabaseReference
@@ -47,7 +45,6 @@ class Home : Fragment() {
     private lateinit var listData: Task
     var dataArrayList = ArrayList<Task?>()
     private lateinit var calendarView : CalendarView
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,7 +91,7 @@ class Home : Fragment() {
         val btn: FloatingActionButton = view.findViewById(R.id.AddTask)
 
         btn.setOnClickListener() {
-            findNavController().navigate(R.id.navigation_add_task)
+            findNavController().navigate(R.id.navigation_propositions_tasks)
         }
 
     }
@@ -130,21 +127,6 @@ class Home : Fragment() {
 
             }
 
-            // Add of items in the spinner
-            // Get the index of the type task's
-            val itemsArray = resources.getStringArray(R.array.item_dropdown_type)
-            val index = itemsArray.indexOf(task.type)
-
-            val spinner = dialog.findViewById<Spinner>(R.id.typeTask)
-            ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.item_dropdown_type,
-                R.layout.item_spinner_type
-            ).also { adapter ->
-                adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-                spinner.adapter = adapter
-            }
-            spinner.setSelection(index)
 
             val inputName = dialog.findViewById<TextView>(R.id.InputName)
             val inputDesc = dialog.findViewById<TextView>(R.id.InputDesc)
@@ -190,12 +172,10 @@ class Home : Fragment() {
                 task.name = inputName.text.toString()
                 task.description = inputDesc.text.toString()
                 task.color = color_items[spinnerColor.selectedItemPosition].text
-                task.type = spinner.selectedItem.toString()
 
                 // Mettre à jour les infos dans la bdd
                 val infoTask = mapOf(
                     "name" to task.name,
-                    "type" to task.type,
                     "description" to task.description,
                     "color" to task.color,
                     //"validate" to task.validate,
@@ -269,7 +249,7 @@ class Home : Fragment() {
                         )
 
                         // Création d'une tache à l'aide de la classe Task
-                        listData = Task(taskKey,taskName, taskDesc,  taskColor, taskType, list_Days, taskValid)
+                        listData = Task(taskKey,taskName, taskDesc,  taskColor, list_Days, taskValid)
                         dataArrayList.add(listData)
                     }
 

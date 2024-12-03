@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="20dp"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginBottom="50dp"
+    tools:context=".PropositionsTasks">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textTitre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Propositions de tâches :"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+
+        <ListView
+            android:id="@+id/listviewPropositions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            tools:listitem="@layout/list_view_proposition_tasks"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10.0sp"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/skip"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:text="Ajouter une tâche libre"
+        android:textSize="16dp"/>
+
+</FrameLayout>

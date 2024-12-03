@@ -17,7 +17,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:text="Ajouter une tâche"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:textStyle="bold"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,13 +42,6 @@
                 android:backgroundTint="@color/greenSelect" />
 
         </LinearLayout>
-
-        <Spinner
-            android:id="@+id/typeTask"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:backgroundTint="@color/greenSelect"/>
 
         <LinearLayout
             android:layout_width="match_parent"
