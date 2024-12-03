@@ -96,13 +96,15 @@
             <!-- Bouton pour basculer entre les modes et enregistrer -->
             <ImageButton
                 android:id="@+id/editObjectiveButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/edit_objective"
-                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_edit"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
