@@ -23,7 +23,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tâches du jour"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:textStyle="bold"/>
 
             <ListView
                 android:id="@+id/listview"

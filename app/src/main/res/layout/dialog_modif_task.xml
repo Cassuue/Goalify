@@ -39,13 +39,6 @@
 
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/typeTask"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/greenSelect"
-        android:padding="10dp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
