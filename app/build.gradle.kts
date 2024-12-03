@@ -53,12 +53,14 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     implementation(libs.play.services.auth)
     implementation(libs.androidx.work.runtime.ktx)
 
@@ -66,4 +68,5 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
+    implementation(libs.gson)
 }

@@ -1,4 +1,4 @@
-package ca.uqac.goalify
+package ca.uqac.goalify.ui.reward
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import ca.uqac.goalify.ca.uqac.goalify.Reward
+import ca.uqac.goalify.R
 import com.bumptech.glide.Glide
 
 class RewardAdapter(
@@ -28,14 +28,16 @@ class RewardAdapter(
     override fun onBindViewHolder(holder: RewardViewHolder, position: Int) {
         val reward = rewards[position]
         holder.title.text = reward.title
-        holder.subtitle.text = reward.subtitle
+        holder.subtitle.text = if (reward.isUnlocked) reward.subtitle else "Details hidden"
+
+        val imagePath = "file:///android_asset/${reward.imageUrl}"
 
         if (reward.isUnlocked) {
-            Glide.with(context).load(reward.imageUrl).into(holder.image)
+            Glide.with(context).load(imagePath).into(holder.image)
             holder.title.setTextColor(context.getColor(android.R.color.black))
             holder.subtitle.setTextColor(context.getColor(android.R.color.black))
         } else {
-            Glide.with(context).load(reward.imageUrl).into(holder.image)
+            Glide.with(context).load(imagePath).into(holder.image)
             holder.image.setColorFilter(context.getColor(android.R.color.darker_gray))
             holder.title.setTextColor(context.getColor(android.R.color.darker_gray))
             holder.subtitle.setTextColor(context.getColor(android.R.color.darker_gray))
