@@ -42,15 +42,20 @@ class LoginFragment : Fragment() {
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
 
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        activity?.finish()
-                        startActivity(Intent(requireContext(), MainActivity::class.java))
-                    } else {
-                        Toast.makeText(requireContext(), "Erreur de connexion", Toast.LENGTH_SHORT).show()
+            if (email.isNotEmpty() && password.isNotEmpty()){
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            activity?.finish()
+                            startActivity(Intent(requireContext(), MainActivity::class.java))
+                        } else {
+                            Toast.makeText(requireContext(), "Erreur de connexion", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
+            } else{
+                Toast.makeText(requireContext(), "Merci de remplir tous les champs !", Toast.LENGTH_SHORT).show()
+
+            }
         }
 
         binding.tvCreateAccount.setOnClickListener {
