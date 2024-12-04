@@ -44,7 +44,7 @@ class ThreadDetailActivity : AppCompatActivity() {
 
         // Activer le bouton "Retour"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Thread Details"
+        supportActionBar?.title = "Détails"
 
         // Récupérer l'ID du document transmis par l'intent
         val threadDocumentId = intent.getStringExtra("THREAD_DOCUMENT_ID") ?: run {
@@ -68,7 +68,7 @@ class ThreadDetailActivity : AppCompatActivity() {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     threadTitle.text = document.getString("title")
-                    threadAuthor.text = "By: ${document.getString("author")}"
+                    threadAuthor.text = "Par : ${document.getString("author")}"
                     threadContent.text = document.getString("content")
                     loadComments(threadDocumentId)
                 } else {
