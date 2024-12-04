@@ -1,12 +1,15 @@
 package ca.uqac.goalify
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.Toast
@@ -81,7 +84,30 @@ class ForumListFragment : Fragment() {
 
     private fun showCreateThreadDialog() {
         // Création d'une boîte de dialogue pour saisir le titre et le contenu du thread
-        val builder = AlertDialog.Builder(requireContext())
+
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_create_thread)
+
+        dialog.findViewById<Button>(R.id.addForum).setOnClickListener(){
+
+            val title = dialog.findViewById<EditText>(R.id.titleEditText).text.toString()
+            val content = dialog.findViewById<EditText>(R.id.contentEditText).text.toString()
+            if (title.isNotBlank() && content.isNotBlank()) {
+                createThread(title, content)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(requireContext(), "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.findViewById<ImageButton>(R.id.close).setOnClickListener(){
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+
+        /*val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Créer un thread")
 
         val layout = LinearLayout(requireContext())
@@ -109,7 +135,7 @@ class ForumListFragment : Fragment() {
 
         builder.setNegativeButton("Annuler", null)
 
-        builder.show()
+        builder.show()*/
     }
 
     private fun createThread(title: String, content: String) {

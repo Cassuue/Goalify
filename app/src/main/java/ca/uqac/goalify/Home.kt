@@ -127,7 +127,6 @@ class Home : Fragment() {
 
             }
 
-
             val inputName = dialog.findViewById<TextView>(R.id.InputName)
             val inputDesc = dialog.findViewById<TextView>(R.id.InputDesc)
 

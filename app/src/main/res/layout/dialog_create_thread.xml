@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_weight="3"
+    android:layout_margin="16dp">
+
+    <ImageButton
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/close"
+        android:backgroundTint="@color/white"/>
+
+    <TextView
+        android:id="@+id/titre"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="44dp"
+        android:text="Créer un nouveau forum"
+        android:textSize="24sp"/>
 
     <!-- Champ de texte pour le titre -->
     <EditText
         android:id="@+id/titleEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Titre du thread"
+        android:hint="Titre du forum"
         android:inputType="text" />
 
     <!-- Champ de texte pour le contenu -->
@@ -18,7 +36,17 @@
         android:id="@+id/contentEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Contenu du thread"
+        android:hint="Contenu du forum"
         android:inputType="textMultiLine"
         android:minHeight="100dp" />
+
+
+    <Button
+        android:id="@+id/addForum"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Valider"/>
+
 </LinearLayout>
