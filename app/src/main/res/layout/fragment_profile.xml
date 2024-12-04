@@ -55,15 +55,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/ssection_objectif"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <!-- Layout pour l'objectif et l'icône -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="8dp">
+            android:layout_marginTop="8dp">
             <!--android:background="@drawable/background_border">-->
 
             <!-- Affichage de l'objectif en mode lecture seule -->
@@ -98,7 +97,8 @@
                 android:id="@+id/editObjectiveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_edit"
+                android:src="@drawable/edit"
+                android:backgroundTint="@color/white"
                 android:contentDescription="@string/edit_objective"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/section_params"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <!-- Layout pour le Switch et son texte -->
@@ -191,6 +191,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/delete_account"
+            android:backgroundTint="#EBEBEB"
             android:textColor="@android:color/holo_red_dark" />
 
     </LinearLayout>
