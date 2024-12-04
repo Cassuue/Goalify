@@ -23,9 +23,9 @@ class ForumAdapter(context: Context, private val forums: List<Forum>) :
         val commentsCountTextView: TextView = view.findViewById(R.id.forum_comments_count)
 
         titleTextView.text = forum?.title
-        authorTextView.text = "By: ${forum?.author}"
-        createdAtTextView.text = "Created at: ${forum?.createdAt}"
-        commentsCountTextView.text = "Comments: ${forum?.commentsCount}"
+        authorTextView.text = "Par: ${forum?.author}"
+        createdAtTextView.text = "Créé le : ${forum?.createdAt}"
+        commentsCountTextView.text = "Commentaires: ${forum?.commentsCount}"
 
         // Ajouter un clic sur l'élément de la liste
         view.setOnClickListener {

@@ -10,7 +10,7 @@
         android:id="@+id/forum_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Forum Title"
+        android:text="Titre du forum"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -18,7 +18,7 @@
         android:id="@+id/forum_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Author"
+        android:text="Auteur"
         android:textSize="14sp"
         android:textColor="#555" />
 
@@ -26,7 +26,7 @@
         android:id="@+id/forum_created_at"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Created at"
+        android:text="Créé à"
         android:textSize="12sp"
         android:textColor="#777" />
 
@@ -34,7 +34,7 @@
         android:id="@+id/forum_comments_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Comments: 0"
+        android:text="Commentaires: 0"
         android:textSize="14sp"
         android:textColor="#555" />
 

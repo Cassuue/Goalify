@@ -128,7 +128,7 @@ class ForumListFragment : Fragment() {
         db.collection("forum")
             .add(newThread)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Thread créé avec succès", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Fil créé avec succès", Toast.LENGTH_SHORT).show()
                 fetchVisibleThreads()
             }
             .addOnFailureListener { exception ->
