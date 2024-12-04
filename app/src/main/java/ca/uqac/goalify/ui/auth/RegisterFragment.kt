@@ -1,6 +1,7 @@
 package ca.uqac.goalify.ui.auth
 
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,12 @@ class RegisterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentRegisterBinding.inflate(inflater, container, false)
+
+        binding.tvBackToLogin.text = Html.fromHtml("Vous avez déjà un compte ? <u>Connexion</u>", Html.FROM_HTML_MODE_LEGACY)
+
+        binding.tvBackToLogin.setOnClickListener(){
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+        }
 
         binding.btnCreateAccount.setOnClickListener {
             val email = binding.etRegisterEmail.text.toString()

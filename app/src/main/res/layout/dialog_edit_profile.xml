@@ -5,10 +5,22 @@
     android:padding="16dp"
     android:background="@android:color/white">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <!-- Bouton pour annuler -->
+        <ImageButton
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="Annuler"
+            android:src="@drawable/close"
+            android:backgroundTint="@color/white"/>
 
         <!-- ImageView pour afficher la photo de profil -->
         <ImageView
@@ -53,13 +65,6 @@
             android:gravity="end"
             android:layout_marginTop="16dp">
 
-            <!-- Bouton pour annuler -->
-            <Button
-                android:id="@+id/cancelButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Annuler"
-                android:layout_marginEnd="8dp" />
 
             <!-- Bouton pour enregistrer les modifications -->
             <Button
