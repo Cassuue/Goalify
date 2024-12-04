@@ -166,7 +166,6 @@ class AddTask : Fragment() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             val currentDestination = findNavController().currentDestination
 
-            // Vérifiez si vous êtes dans le fragment spécifique
             if (currentDestination?.id == R.id.navigation_add_task) {
                 AlertDialog.Builder(requireContext())
                     .setTitle("Attention")
@@ -176,7 +175,7 @@ class AddTask : Fragment() {
                     .show()
                 true
             } else {
-                // Navigation normale si vous n'êtes pas dans le fragment cible
+
                 findNavController().navigate(item.itemId)
                 true
             }

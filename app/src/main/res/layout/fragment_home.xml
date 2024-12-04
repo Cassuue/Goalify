@@ -37,20 +37,19 @@
                 android:divider="@android:color/transparent"
                 android:dividerHeight="10.0sp"/>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/AddTask"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/greenMain"
-                android:clickable="true"
-                app:elevation="2dp"
-                app:srcCompat="@android:drawable/ic_input_add"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_margin="20dp"
-                app:layout_constraintEnd_toEndOf="parent"/>
-
         </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/AddTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:backgroundTint="@color/greenMain"
+            android:clickable="true"
+            app:elevation="2dp"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:layout_margin="20dp" />
+
     </FrameLayout>
 </ScrollView>
 
