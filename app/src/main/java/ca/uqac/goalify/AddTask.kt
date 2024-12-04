@@ -14,6 +14,7 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -158,20 +159,27 @@ class AddTask : Fragment() {
             }
 
             findNavController().navigate(R.id.navigation_home)
+
         }
-    }
 
-    fun shouldWarnOnExit(): Boolean {
-        return true
-    }
+        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            val currentDestination = findNavController().currentDestination
 
-    // Méthode pour gérer la logique de l’avertissement
-    fun showWarning(onConfirmed: () -> Unit) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Attention")
-            .setMessage("Etes vous sûr de vouloir quitter la page ? Les modifications apportées ne seront pas enregistrées")
-            .setPositiveButton("Oui") { _, _ -> onConfirmed() }
-            .setNegativeButton("Non", null)
-            .show()
+            // Vérifiez si vous êtes dans le fragment spécifique
+            if (currentDestination?.id == R.id.navigation_add_task) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Attention")
+                    .setMessage("Etes-vous sûr de vouloir quitter la page ? Les modifications apportées ne seront pas enregistrées")
+                    .setPositiveButton("Oui") { _, _ -> findNavController().navigate(item.itemId) }
+                    .setNegativeButton("Non", null)
+                    .show()
+                true
+            } else {
+                // Navigation normale si vous n'êtes pas dans le fragment cible
+                findNavController().navigate(item.itemId)
+                true
+            }
+        }
     }
 }
