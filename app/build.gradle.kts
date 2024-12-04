@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.googleid)
 
     implementation(libs.gson)
+    implementation(libs.okhttp)
 }

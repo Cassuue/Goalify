@@ -46,7 +46,6 @@ class ProfileFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         currentUser = auth.currentUser
 
-        // Observer les changements dans le ViewModel
         profileViewModel.profileName.observe(viewLifecycleOwner, Observer { name ->
             binding.profileName.text = name
         })
@@ -62,36 +61,28 @@ class ProfileFragment : Fragment() {
             }
         })
 
-        // Afficher les informations de l'utilisateur
         currentUser?.let { user ->
             profileViewModel.updateProfile(user.displayName ?: "", user.email ?: "")
-            // Charger l'objectif de l'utilisateur
             loadUserObjective(user.uid)
+            loadUserAiStatus(user.uid)
         }
 
-        // Mettre à jour les informations de profil
         binding.updateProfileButton.setOnClickListener {
             val editProfileDialog = EditProfileDialogFragment()
             editProfileDialog.show(parentFragmentManager, "EditProfileDialog")
         }
 
-        // Activer/Désactiver les notifications
         binding.notificationsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            // Sauvegarder l'état des notifications dans Firestore ou SharedPreferences
             Toast.makeText(context, "Notifications ${if (isChecked) "activées" else "désactivées"}", Toast.LENGTH_SHORT).show()
         }
 
-        // Activer/Désactiver l'IA
         binding.aiSwitch.setOnCheckedChangeListener { _, isChecked ->
-            // Sauvegarder l'état de l'IA dans Firestore ou SharedPreferences
-            Toast.makeText(context, "IA ${if (isChecked) "activée" else "désactivée"}", Toast.LENGTH_SHORT).show()
+            db.collection("users").document(currentUser?.uid ?: "").update("aiEnabled", isChecked)
         }
 
-        // Se déconnecter
         binding.logoutButton.setOnClickListener {
             auth.signOut()
             Toast.makeText(context, "Déconnecté", Toast.LENGTH_SHORT).show()
-            // Rediriger vers l'écran de connexion, AuthActivity
             activity?.finish()
             startActivity(Intent(context, AuthActivity::class.java))
         }
@@ -101,7 +92,6 @@ class ProfileFragment : Fragment() {
             currentUser?.delete()?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(context, "Compte supprimé", Toast.LENGTH_SHORT).show()
-                    // Rediriger vers l'écran de connexion
                     activity?.finish()
                     startActivity(Intent(context, AuthActivity::class.java))
                 } else {
@@ -110,10 +100,8 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        // Gérer le clic sur le bouton d'édition de l'objectif
         binding.editObjectiveButton.setOnClickListener {
             if (isEditingObjective) {
-                // Enregistrer l'objectif
                 val objective = binding.objectiveEditText.text.toString().trim()
                 if (objective.isNotEmpty()) {
                     saveObjectiveToFirestore(objective)
@@ -121,7 +109,6 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(context, "Veuillez entrer un objectif", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                // Passer en mode édition
                 binding.objectiveTextView.visibility = View.GONE
                 binding.objectiveEditText.visibility = View.VISIBLE
                 binding.objectiveEditText.setText(binding.objectiveTextView.text)
@@ -138,7 +125,6 @@ class ProfileFragment : Fragment() {
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)
             binding.profileImage.setImageBitmap(bitmap)
         } else {
-            // Charger la photo de profil de l'utilisateur (Google ou placeholder)
             currentUser?.photoUrl?.let { photoUrl ->
                 Glide.with(this).load(photoUrl).into(binding.profileImage)
             } ?: run {
@@ -161,6 +147,19 @@ class ProfileFragment : Fragment() {
             }
     }
 
+    private fun loadUserAiStatus(userId: String) {
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val aiEnabled = document["aiEnabled"] as? Boolean == true
+                    binding.aiSwitch.isChecked = aiEnabled
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Erreur lors du chargement des paramètres IA", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun saveObjectiveToFirestore(objective: String) {
         currentUser?.let { user ->
             val userRef = db.collection("users").document(user.uid)
@@ -179,7 +178,6 @@ class ProfileFragment : Fragment() {
                 binding.editObjectiveButton.setImageResource(R.drawable.edit)
                 isEditingObjective = false
 
-                // Vérifier et débloquer les récompenses
                 RewardsManager.checkAndUnlockRewards(user.uid, 2, requireContext())
             }.addOnFailureListener {
                 Toast.makeText(context, "Erreur lors de l'enregistrement de l'objectif", Toast.LENGTH_SHORT).show()
