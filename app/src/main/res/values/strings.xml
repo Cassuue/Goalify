@@ -9,10 +9,10 @@
     <string name="title_home">Home</string>
     <string name="title_forum">Forum</string>
     <string name="title_profile">Profile</string>
-    <string name="calendar">Calendar</string>
-    <string name="home">Home</string>
+    <string name="calendar">Calendrier</string>
+    <string name="home">Accueil</string>
     <string name="forum">Forum</string>
-    <string name="rewards">Rewards</string>
+    <string name="rewards">Récompenses</string>
     <string name="profile">Profile</string>
     <string name="forgot_password">Mot de passe oublié</string>
     <string name="enter_email">Entrez l\'email</string>

@@ -3,5 +3,39 @@
     <style name="Base.Theme.Goalify" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <item name="colorPrimary">@color/greenMain</item>
+        <item name="colorPrimaryVariant">@color/greenSelect</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/greenMain</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">@color/background_light</item>
+        <item name="colorOnBackground">@color/black</item>
+
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
+    <style name="Theme.Goalify" parent="Base.Theme.Goalify" />
+
+    <style name="BottomNavTheme" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="itemIconTint">@color/nav_item_color</item> <!-- Icônes -->
+        <item name="itemTextColor">@color/nav_item_color</item> <!-- Texte des éléments -->
+        <item name="itemRippleColor">@android:color/transparent</item> <!-- Effet Ripple transparent -->
+    </style>
+
+    <style name="AppBarTheme" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:background">@color/greenMain</item> <!-- Couleur de fond -->
+        <item name="android:titleTextColor">@color/white</item> <!-- Couleur du titre en blanc pour plus de contraste -->
+        <item name="android:subtitleTextColor">@color/black</item> <!-- Couleur du sous-titre en blanc (si applicable) -->
+    </style>
+
+    <style name="ToolbarTheme" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:background">@color/greenMain</item> <!-- Couleur de fond -->
+        <item name="android:titleTextColor">@color/white</item> <!-- Texte du titre en blanc pour plus de contraste -->
     </style>
 </resources>

@@ -125,7 +125,7 @@ class ProfileFragment : Fragment() {
                 binding.objectiveTextView.visibility = View.GONE
                 binding.objectiveEditText.visibility = View.VISIBLE
                 binding.objectiveEditText.setText(binding.objectiveTextView.text)
-                binding.editObjectiveButton.setImageResource(R.drawable.ic_save)
+                binding.editObjectiveButton.setImageResource(R.drawable.save)
             }
             isEditingObjective = !isEditingObjective
         }
@@ -176,7 +176,7 @@ class ProfileFragment : Fragment() {
                 binding.objectiveTextView.text = objective
                 binding.objectiveTextView.visibility = View.VISIBLE
                 binding.objectiveEditText.visibility = View.GONE
-                binding.editObjectiveButton.setImageResource(R.drawable.ic_edit)
+                binding.editObjectiveButton.setImageResource(R.drawable.edit)
                 isEditingObjective = false
 
                 // Vérifier et débloquer les récompenses

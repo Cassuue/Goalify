@@ -19,6 +19,6 @@
         android:backgroundTint="@color/greenMain"
         android:clickable="true"
         app:elevation="2dp"
-        app:srcCompat="@android:drawable/ic_input_add"
+        app:srcCompat="@drawable/add"
         android:layout_margin="20dp"/>
 </FrameLayout>
