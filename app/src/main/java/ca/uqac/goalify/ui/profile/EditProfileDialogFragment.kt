@@ -52,24 +52,20 @@ class EditProfileDialogFragment : DialogFragment() {
         db = FirebaseFirestore.getInstance()
         contextRef = WeakReference(context)
 
-        // Pré-remplir les champs avec les informations actuelles de l'utilisateur
         val currentUser = auth.currentUser
         currentUser?.let { user ->
             originalName = user.displayName
             originalEmail = user.email
             binding.editName.setText(originalName)
             binding.editEmail.setText(originalEmail)
-            // Charger la photo de profil actuelle
             loadProfilePhoto(user.uid)
         }
 
-        // Sélectionner une photo
         binding.selectPhotoButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(intent, 1)
         }
 
-        // Enregistrer les modifications
         binding.saveProfileButton.setOnClickListener {
             val newName = binding.editName.text.toString().trim()
             val newEmail = binding.editEmail.text.toString().trim()
@@ -85,7 +81,6 @@ class EditProfileDialogFragment : DialogFragment() {
             }
         }
 
-        // Annuler les modifications
         binding.cancelButton.setOnClickListener {
             dismiss()
         }
@@ -95,7 +90,6 @@ class EditProfileDialogFragment : DialogFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
             selectedImageUri = data.data
-            // Afficher la photo sélectionnée
             binding.profileImageView.setImageURI(selectedImageUri)
         }
     }
@@ -118,33 +112,18 @@ class EditProfileDialogFragment : DialogFragment() {
             user.updateProfile(profileUpdates)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        if (newEmail != originalEmail) {
-                            updateEmailInFirestore(newEmail)
+                        if (newEmail != originalEmail && newEmail != user.email) {
+                            user.verifyBeforeUpdateEmail(newEmail)
                         }
                         if (selectedImageUri != null) {
                             saveProfilePhotoToInternalStorage(selectedImageUri!!)
                         } else {
                             profileViewModel.updateProfile(newName, newEmail)
-                            showToast("Profil mis à jour")
                             dismiss()
                         }
                     } else {
                         showToast("Erreur lors de la mise à jour du profil")
                     }
-                }
-        }
-    }
-
-    private fun updateEmailInFirestore(newEmail: String) {
-        val currentUser = auth.currentUser
-        currentUser?.let { user ->
-            val userRef = db.collection("users").document(user.uid)
-            userRef.update("email", newEmail)
-                .addOnSuccessListener {
-                    showToast("Email mis à jour dans Firestore")
-                }
-                .addOnFailureListener {
-                    showToast("Erreur lors de la mise à jour de l'email dans Firestore")
                 }
         }
     }
@@ -160,7 +139,6 @@ class EditProfileDialogFragment : DialogFragment() {
                 fos.flush()
                 fos.close()
                 profileViewModel.updateProfile(user.displayName ?: "", user.email ?: "")
-                showToast("Photo de profil enregistrée")
                 dismiss()
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -176,7 +154,6 @@ class EditProfileDialogFragment : DialogFragment() {
             val bitmap = BitmapFactory.decodeFile(file.absolutePath)
             binding.profileImageView.setImageBitmap(bitmap)
         } else {
-            // Charger la photo de profil de l'utilisateur (Google ou placeholder)
             currentUser?.photoUrl?.let { photoUrl ->
                 Glide.with(this).load(photoUrl).into(binding.profileImageView)
             } ?: run {
