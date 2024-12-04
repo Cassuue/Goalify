@@ -230,7 +230,6 @@ class Calendar : Fragment() {
 
                         val taskKey = taskSnapshot.key.toString()
                         val taskName = taskSnapshot.child("name").value.toString()
-                        val taskType = taskSnapshot.child("type").value.toString()
                         val taskDesc = taskSnapshot.child("description"). value.toString()
                         val taskColor = taskSnapshot.child("color").value.toString()
 
@@ -263,21 +262,6 @@ class Calendar : Fragment() {
                     listAdapter = ListAdapter(requireContext(), dataArrayList, userUid, calendarCheck)
                     listView.adapter = listAdapter
                     listView.isClickable = true
-
-                    listView.setOnItemClickListener { parent, view, position, id ->
-                        val selectedItem = dataArrayList[position]
-                        if(selectedItem != null){
-                            selectedItem.validate = if(selectedItem.validate) false else true
-                            view.findViewById<CheckBox>(R.id.validTask).isChecked = selectedItem.validate
-                            val nameTask = view.findViewById<TextView>(R.id.textNameTask)
-                            if(selectedItem.validate){
-                                nameTask.paintFlags = nameTask.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                            } else{
-                                nameTask.paintFlags = nameTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-                            }
-                        }
-                        true
-                    }
 
                     // Event listener for update tasks
                     listView.setOnItemLongClickListener { parent, view, position, id ->
