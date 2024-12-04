@@ -43,6 +43,7 @@ class ForgotPasswordFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(context, "Password reset email sent!", Toast.LENGTH_SHORT).show()
+                    activity?.onBackPressed()
                 } else {
                     Toast.makeText(context, "Failed to send reset email", Toast.LENGTH_SHORT).show()
                 }
