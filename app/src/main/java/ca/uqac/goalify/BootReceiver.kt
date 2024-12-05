@@ -1,6 +1,5 @@
 package ca.uqac.goalify
 
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -8,7 +7,6 @@ import android.os.Build
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import java.util.concurrent.TimeUnit
 import java.time.Duration
 
 class BootReceiver : BroadcastReceiver() {
@@ -24,7 +22,7 @@ class BootReceiver : BroadcastReceiver() {
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 "MyPeriodicWorker",
-                ExistingPeriodicWorkPolicy.REPLACE,
+                ExistingPeriodicWorkPolicy.UPDATE,
                 workRequest
             )
         }

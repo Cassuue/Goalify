@@ -33,7 +33,7 @@ class ForgotPasswordFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         backToLogin.setOnClickListener{
-            activity?.onBackPressed()
+            findNavController().popBackStack()
         }
 
         resetPasswordButton.setOnClickListener {
@@ -53,7 +53,7 @@ class ForgotPasswordFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(context, "Email envoyé !", Toast.LENGTH_SHORT).show()
-                    activity?.onBackPressed()
+                    findNavController().popBackStack()
                 } else {
                     Toast.makeText(context, "Echec de l'envoi de l'email", Toast.LENGTH_SHORT).show()
                 }

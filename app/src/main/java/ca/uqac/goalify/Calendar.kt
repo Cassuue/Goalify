@@ -1,14 +1,11 @@
 package ca.uqac.goalify
 
 import android.app.Dialog
-import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.CheckBox
@@ -16,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -24,7 +22,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -85,20 +82,24 @@ class Calendar : Fragment() {
             dateFormat = SimpleDateFormat("dd/MM/yyyy", locale)
             val date = dateFormat.parse(dateString)
 
-            dateFormat = SimpleDateFormat("EEE", locale)
-            val daySelect = dateFormat.format(date)
+            if (date != null) {
+                dateFormat = SimpleDateFormat("EEE", locale)
+                val daySelect = dateFormat.format(date)
 
-            val todaySelect = when (daySelect) {
-                "Mon" -> "monday"
-                "Tue" -> "tuesday"
-                "Wed" -> "wednesday"
-                "Thu" -> "thursday"
-                "Fri" -> "friday"
-                "Sat" -> "saturday"
-                else -> "sunday"
+                val todaySelect = when (daySelect) {
+                    "Mon" -> "monday"
+                    "Tue" -> "tuesday"
+                    "Wed" -> "wednesday"
+                    "Thu" -> "thursday"
+                    "Fri" -> "friday"
+                    "Sat" -> "saturday"
+                    else -> "sunday"
+                }
+
+                affichageTaskDay(todaySelect, userUid, listViewCalendar)
+            } else {
+                Log.e("Calendar", "Failed to parse date: $dateString")
             }
-
-            affichageTaskDay(todaySelect, userUid, listViewCalendar)
         }
     }
 
@@ -147,7 +148,7 @@ class Calendar : Fragment() {
             val checkBoxSat = dialog.findViewById<CheckBox>(R.id.CheckSat)
             val checkBoxSun = dialog.findViewById<CheckBox>(R.id.CheckSun)
 
-            task.days.forEach(){ day, value->
+            task.days.forEach { day, value->
                 if (value == true){
                     if(day == "monday") checkBoxMon.isChecked = true
                     if(day == "tuesday") checkBoxTue.isChecked = true
@@ -163,7 +164,7 @@ class Calendar : Fragment() {
 
             // Pour chaque checkbox on récupère la valeur et on l'ajoute dans le dictionnaire
             arrayCheckBoxs.forEach { checkBox->
-                checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                checkBox.setOnCheckedChangeListener { _, isChecked ->
                     task.days[checkBox.tag.toString()] = isChecked
                 }
             }
@@ -264,7 +265,7 @@ class Calendar : Fragment() {
                     listView.isClickable = true
 
                     // Event listener for update tasks
-                    listView.setOnItemLongClickListener { parent, view, position, id ->
+                    listView.setOnItemLongClickListener { _, _, position, _ ->
                         val selectedItem = dataArrayList[position]
                         updateTask(selectedItem, userUid)
                         true

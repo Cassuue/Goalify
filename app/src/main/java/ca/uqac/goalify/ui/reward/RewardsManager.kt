@@ -13,7 +13,7 @@ object RewardsManager {
     private val auth = FirebaseAuth.getInstance()
     private var allRewards: List<Reward> = emptyList()
 
-    fun initialize(context: Context) {
+    fun initialize() {
         loadRewardsFromFirestore()
         fetchUserRewards()
     }

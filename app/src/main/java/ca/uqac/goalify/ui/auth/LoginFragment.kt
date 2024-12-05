@@ -7,14 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ca.uqac.goalify.MainActivity
 import ca.uqac.goalify.R
 import ca.uqac.goalify.databinding.FragmentLoginBinding
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -22,8 +24,34 @@ import com.google.firebase.auth.GoogleAuthProvider
 class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private val RC_SIGN_IN = 9001
+    private lateinit var oneTapClient: SignInClient
+    private lateinit var signInRequest: BeginSignInRequest
+
+    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+        val data = result.data
+        try {
+            val credential = oneTapClient.getSignInCredentialFromIntent(data)
+            val idToken = credential.googleIdToken
+            if (idToken != null) {
+                val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                FirebaseAuth.getInstance().signInWithCredential(firebaseCredential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            activity?.finish()
+                            startActivity(Intent(requireContext(), MainActivity::class.java))
+                        } else {
+                            Toast.makeText(requireContext(), "Erreur de connexion Google", Toast.LENGTH_SHORT).show()
+                            Log.d("Google", "Erreur de connexion Google: ${task.exception?.message}")
+                        }
+                    }
+            } else {
+                Toast.makeText(requireContext(), "Erreur de connexion Google", Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: ApiException) {
+            Toast.makeText(requireContext(), "Erreur de connexion Google", Toast.LENGTH_SHORT).show()
+            Log.d("Google", "Erreur de connexion Google: ${e.message}")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,12 +59,16 @@ class LoginFragment : Fragment() {
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
 
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_client_id))
-            .requestEmail()
+        oneTapClient = Identity.getSignInClient(requireContext())
+        signInRequest = BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    .setServerClientId(getString(R.string.default_client_id))
+                    .setFilterByAuthorizedAccounts(false)
+                    .build()
+            )
             .build()
-
-        googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
 
         binding.btnSignIn.setOnClickListener {
             val email = binding.etEmail.text.toString()
@@ -54,7 +86,6 @@ class LoginFragment : Fragment() {
                     }
             } else{
                 Toast.makeText(requireContext(), "Merci de remplir tous les champs !", Toast.LENGTH_SHORT).show()
-
             }
         }
 
@@ -67,7 +98,6 @@ class LoginFragment : Fragment() {
         }
 
         binding.tvSignInWithGoogle.setOnClickListener {
-            // TODO: Implement Google Sign-In
             signInWithGoogle()
         }
 
@@ -75,31 +105,14 @@ class LoginFragment : Fragment() {
     }
 
     private fun signInWithGoogle() {
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            activity?.finish()
-                            startActivity(Intent(requireContext(), MainActivity::class.java))
-                        } else {
-                            Toast.makeText(requireContext(), "Erreur de connexion Googlesss", Toast.LENGTH_SHORT).show()
-                            Log.d("Google", "Erreur de connexion Google: ${task.exception?.message}")
-                        }
-                    }
-            } catch (e: ApiException) {
+        oneTapClient.beginSignIn(signInRequest)
+            .addOnSuccessListener { result ->
+                val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent).build()
+                googleSignInLauncher.launch(intentSenderRequest)
+            }
+            .addOnFailureListener { e: Exception ->
                 Toast.makeText(requireContext(), "Erreur de connexion Google", Toast.LENGTH_SHORT).show()
                 Log.d("Google", "Erreur de connexion Google: ${e.message}")
             }
-        }
     }
 }

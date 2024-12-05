@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,6 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import ca.uqac.goalify.R
@@ -37,6 +40,8 @@ class EditProfileDialogFragment : DialogFragment() {
     private var selectedImageUri: Uri? = null
     private val profileViewModel: ProfileViewModel by activityViewModels()
 
+    private lateinit var selectPhotoLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,6 +57,13 @@ class EditProfileDialogFragment : DialogFragment() {
         db = FirebaseFirestore.getInstance()
         contextRef = WeakReference(context)
 
+        selectPhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                selectedImageUri = result.data?.data
+                binding.profileImageView.setImageURI(selectedImageUri)
+            }
+        }
+
         val currentUser = auth.currentUser
         currentUser?.let { user ->
             originalName = user.displayName
@@ -63,7 +75,7 @@ class EditProfileDialogFragment : DialogFragment() {
 
         binding.selectPhotoButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, 1)
+            selectPhotoLauncher.launch(intent)
         }
 
         binding.saveProfileButton.setOnClickListener {
@@ -84,22 +96,6 @@ class EditProfileDialogFragment : DialogFragment() {
         binding.cancelButton.setOnClickListener {
             dismiss()
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
-            selectedImageUri = data.data
-            binding.profileImageView.setImageURI(selectedImageUri)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val params = dialog?.window?.attributes
-        params?.width = ViewGroup.LayoutParams.MATCH_PARENT
-        params?.height = ViewGroup.LayoutParams.WRAP_CONTENT
-        dialog?.window?.attributes = params as android.view.WindowManager.LayoutParams
     }
 
     private fun updateProfile(newName: String, newEmail: String) {
@@ -129,23 +125,24 @@ class EditProfileDialogFragment : DialogFragment() {
     }
 
     private fun saveProfilePhotoToInternalStorage(imageUri: Uri) {
-        val currentUser = auth.currentUser
-        currentUser?.let { user ->
-            val bitmap = MediaStore.Images.Media.getBitmap(contextRef.get()?.contentResolver, imageUri)
-            val file = File(contextRef.get()?.filesDir, "profile_image_${user.uid}.jpg")
-            try {
-                val fos = FileOutputStream(file)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-                fos.flush()
-                fos.close()
-                profileViewModel.updateProfile(user.displayName ?: "", user.email ?: "")
-                dismiss()
-            } catch (e: IOException) {
-                e.printStackTrace()
-                showToast("Erreur lors de l'enregistrement de la photo de profil")
-            }
+    val currentUser = auth.currentUser
+    currentUser?.let { user ->
+        val source = ImageDecoder.createSource(contextRef.get()?.contentResolver!!, imageUri)
+        val bitmap = ImageDecoder.decodeBitmap(source)
+        val file = File(contextRef.get()?.filesDir, "profile_image_${user.uid}.jpg")
+        try {
+            val fos = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.flush()
+            fos.close()
+            profileViewModel.updateProfile(user.displayName ?: "", user.email ?: "")
+            dismiss()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            showToast("Erreur lors de l'enregistrement de la photo de profil")
         }
     }
+}
 
     private fun loadProfilePhoto(userId: String) {
         val currentUser = auth.currentUser

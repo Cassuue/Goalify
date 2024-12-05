@@ -1,7 +1,6 @@
 package ca.uqac.goalify
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
@@ -10,13 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -91,23 +85,23 @@ class ThreadDetailActivity : AppCompatActivity() {
     }
 
     private fun loadComments(threadDocumentId: String) {
-        db.collection("forum").document(threadDocumentId).get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val commentsList = document.get("comments") as? List<Map<String, Any>> ?: emptyList()
-                    val comments = commentsList.map { commentData ->
-                        val author = commentData["author"] as? String ?: "Inconnu"
-                        val content = commentData["comment"] as? String ?: "Pas de contenu"
-                        "$author: $content"
-                    }
-                    commentsRecyclerView.adapter = CommentsAdapter(comments)
-                } else {
-                    Toast.makeText(this, "Thread introuvable.", Toast.LENGTH_SHORT).show()
+    db.collection("forum").document(threadDocumentId).get()
+        .addOnSuccessListener { document ->
+            if (document.exists()) {
+                val commentsList = (document.get("comments") as? List<*>)?.filterIsInstance<Map<String, Any>>() ?: emptyList()
+                val comments = commentsList.map { commentData ->
+                    val author = commentData["author"] as? String ?: "Inconnu"
+                    val content = commentData["comment"] as? String ?: "Pas de contenu"
+                    "$author: $content"
                 }
+                commentsRecyclerView.adapter = CommentsAdapter(comments)
+            } else {
+                Toast.makeText(this, "Thread introuvable.", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Erreur: Impossible de charger les commentaires.", Toast.LENGTH_SHORT).show()
-            }
+        }
+        .addOnFailureListener {
+            Toast.makeText(this, "Erreur: Impossible de charger les commentaires.", Toast.LENGTH_SHORT).show()
+        }
     }
 
 
