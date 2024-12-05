@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.database
 
 private const val ARG_TITLE = "taskTitle"
+private const val ARG_DESC = "taskDesc"
 
 
 class AddTask : Fragment() {
@@ -29,11 +30,13 @@ class AddTask : Fragment() {
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private var title: String? = null
+    private var desc: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             title = it.getString(ARG_TITLE)
+            desc = it.getString(ARG_DESC)
         }
     }
 
@@ -51,6 +54,7 @@ class AddTask : Fragment() {
             AddTask().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TITLE, title)
+                    putString(ARG_DESC, desc)
                 }
             }
     }
@@ -60,9 +64,14 @@ class AddTask : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val inputName = view.findViewById<EditText>(R.id.InputName)
+        val inputDesc = view.findViewById<EditText>(R.id.InputDesc)
 
         if(title != null){
             inputName.setText(title)
+        }
+
+        if(desc != null){
+            inputDesc.setText(desc)
         }
 
         // Initialiser FirebaseAuth
@@ -125,7 +134,7 @@ class AddTask : Fragment() {
             // On récupère les valeurs des champs
             val taskName = inputName.text.toString()
 
-            val inputDesc = view.findViewById<EditText>(R.id.InputDesc).text.toString()
+            val taskDesc = inputDesc.text.toString()
 
             val positionSelectedColor = spinnerColor.selectedItemPosition
             val selectedColor = color_items[positionSelectedColor].text.toString()
@@ -135,7 +144,7 @@ class AddTask : Fragment() {
             val task = mapOf(
                 "name" to taskName,
                 "color" to selectedColor,
-                "description" to inputDesc,
+                "description" to taskDesc,
                 "validate" to false,
                 "days" to list_resDay
             )
@@ -151,8 +160,8 @@ class AddTask : Fragment() {
 
             // Réinitialisation des champs du formulaire
             spinnerColor.setSelection(0)
-            view.findViewById<EditText>(R.id.InputName).setText("")
-            view.findViewById<EditText>(R.id.InputDesc).setText("")
+            inputName.setText("")
+            inputDesc.setText("")
 
             arrayCheckBoxs.forEach { checkBox ->
                 checkBox.isChecked = false

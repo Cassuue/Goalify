@@ -16,6 +16,7 @@ class PropositionsTasks : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseFirestore
+    private var infoPropositions = mutableMapOf<String, String?>()
     private var dataArrayList = ArrayList<String>()
     private lateinit var listAdapter: ListAdapterPropositions
 
@@ -45,8 +46,12 @@ class PropositionsTasks : Fragment() {
 
         listView.setOnItemClickListener { parent, view, position, id ->
             val selectedItem = dataArrayList[position]
+            val description = infoPropositions[selectedItem]
             val bundle = Bundle().apply {
                 putString("taskTitle", selectedItem)
+                if(description != null){
+                    putString("taskDesc", description)
+                }
             }
             findNavController().navigate(R.id.navigation_add_task, bundle)
         }
@@ -66,14 +71,34 @@ class PropositionsTasks : Fragment() {
                     val context = requireActivity()
 
                     dataArrayList.clear()
+
+                    infoPropositions = mutableMapOf<String, String?>()
                     if (aiEnabled) {
                         GroqApi.generateTaskSuggestions(context, userObjective) { suggestions ->
                             suggestions.forEach { suggestion ->
                                 Log.d("PropositionsTasks", "Suggestion: ${suggestion.description}")
-                                dataArrayList.add(suggestion.titre)
+                                infoPropositions[suggestion.titre] = suggestion.description
                                 //TODO: pour ajouter les descriptions des tâches, l'ia les fournit dans suggestions.description
                             }
-                            dataArrayList.add("Aller faire les courses")
+                            infoPropositions["Aller faire les courses"] = null
+                            infoPropositions["Prendre une pause"] = null
+                            infoPropositions["Apprendre une langue étrangère"] = null
+                            infoPropositions["Apprendre à jouer d'un instrument"] = null
+                            infoPropositions["Aller faire du sport"] = null
+                            infoPropositions["Lire un livre"] = null
+                            infoPropositions["Sortir prendre l'air"] = null
+                            infoPropositions["Lire un livre"] = null
+                            infoPropositions["Contacter la famille"] = null
+                            infoPropositions["Limiter le temps sur les réseaux sociaux"] = null
+                            infoPropositions["Faire le ménage"] = null
+                            println(infoPropositions)
+
+                            infoPropositions.forEach { (titre, description) ->
+                                dataArrayList.add(titre)
+                            }
+
+                            listAdapter.notifyDataSetChanged()
+                            /*dataArrayList.add("Aller faire les courses")
                             dataArrayList.add("Prendre une pause")
                             dataArrayList.add("Apprendre une langue étrangère")
                             dataArrayList.add("Apprendre à jouer d'un instrument")
@@ -83,10 +108,29 @@ class PropositionsTasks : Fragment() {
                             dataArrayList.add("Contacter la famille")
                             dataArrayList.add("Limiter le temps sur les réseaux sociaux")
                             dataArrayList.add("Faire le ménage")
-                            listAdapter.notifyDataSetChanged()
+                            listAdapter.notifyDataSetChanged()*/
                         }
                     } else {
-                        dataArrayList.add("Aller faire les courses")
+
+                        infoPropositions["Aller faire les courses"] = null
+                        infoPropositions["Prendre une pause"] = null
+                        infoPropositions["Apprendre une langue étrangère"] = null
+                        infoPropositions["Apprendre à jouer d'un instrument"] = null
+                        infoPropositions["Aller faire du sport"] = null
+                        infoPropositions["Lire un livre"] = null
+                        infoPropositions["Sortir prendre l'air"] = null
+                        infoPropositions["Lire un livre"] = null
+                        infoPropositions["Contacter la famille"] = null
+                        infoPropositions["Limiter le temps sur les réseaux sociaux"] = null
+                        infoPropositions["Faire le ménage"] = null
+
+                        infoPropositions.forEach { (titre, description) ->
+                            dataArrayList.add(titre)
+                        }
+
+                        listAdapter.notifyDataSetChanged()
+
+                        /*dataArrayList.add("Aller faire les courses")
                         dataArrayList.add("Prendre une pause")
                         dataArrayList.add("Apprendre une langue étrangère")
                         dataArrayList.add("Apprendre à jouer d'un instrument")
@@ -96,7 +140,7 @@ class PropositionsTasks : Fragment() {
                         dataArrayList.add("Contacter la famille")
                         dataArrayList.add("Limiter le temps sur les réseaux sociaux")
                         dataArrayList.add("Faire le ménage")
-                        listAdapter.notifyDataSetChanged()
+                        listAdapter.notifyDataSetChanged()*/
                     }
                 }
         }.addOnFailureListener {

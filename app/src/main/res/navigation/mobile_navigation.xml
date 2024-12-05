@@ -32,6 +32,9 @@
         <argument
             android:name="taskTitle"
             app:argType="string" />
+        <argument
+            android:name="taskDesc"
+            app:argType="string"/>
     </fragment>
 
 
