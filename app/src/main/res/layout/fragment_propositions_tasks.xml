@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="48dp"
             tools:listitem="@layout/list_view_proposition_tasks"
             android:divider="@android:color/transparent"
             android:dividerHeight="10.0sp"/>

@@ -17,7 +17,7 @@ data class TaskSuggestion(val titre: String, val description: String)
 data class SuggestionsResponse(val suggestions: List<TaskSuggestion>)
 
 object GroqApi {
-    private const val API_KEY = "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"
+    private const val API_KEY = BuildConfig.GROQ_API_KEY
     private const val BASE_URL = "https://api.groq.com/openai/v1/chat/completions"
 
     private val client = OkHttpClient()
