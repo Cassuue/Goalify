@@ -98,6 +98,14 @@ class EditProfileDialogFragment : DialogFragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val params = dialog?.window?.attributes
+        params?.width = ViewGroup.LayoutParams.MATCH_PARENT
+        params?.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        dialog?.window?.attributes = params as android.view.WindowManager.LayoutParams
+    }
+
     private fun updateProfile(newName: String, newEmail: String) {
         val currentUser = auth.currentUser
         currentUser?.let { user ->
