@@ -97,6 +97,6 @@ object RewardsManager {
     }
 
     private fun showRewardUnlockedNotification(rewardId: Int, context: Context) {
-        Toast.makeText(context, "Achievement Unlocked: Reward $rewardId", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Récompense débloquée : n°$rewardId", Toast.LENGTH_SHORT).show()
     }
 }
