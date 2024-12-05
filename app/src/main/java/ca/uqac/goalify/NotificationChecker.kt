@@ -19,6 +19,10 @@ class NotificationChecker(context: Context, params: WorkerParameters) : Coroutin
 
     override suspend fun doWork(): Result {
         Log.d("NotificationChecker", "Worker exécuté")
+        if (!areNotificationsEnabled()) {
+            Log.d("NotificationChecker", "Notifications désactivées par l'utilisateur")
+            return Result.success()
+        }
 
         try {
             // Récupère l'utilisateur connecté
@@ -61,6 +65,10 @@ class NotificationChecker(context: Context, params: WorkerParameters) : Coroutin
         }
 
         return Result.success()
+    }
+    private fun areNotificationsEnabled(): Boolean {
+        val sharedPreferences = applicationContext.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("notifications_enabled", true)
     }
 
     private fun sendNotification(title: String, message: String) {

@@ -72,9 +72,13 @@ class ProfileFragment : Fragment() {
             editProfileDialog.show(parentFragmentManager, "EditProfileDialog")
         }
 
+        binding.notificationsSwitch.isChecked = loadNotificationState()
+
         binding.notificationsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            saveNotificationState(isChecked)
             Toast.makeText(context, "Notifications ${if (isChecked) "activées" else "désactivées"}", Toast.LENGTH_SHORT).show()
         }
+
 
         binding.aiSwitch.setOnCheckedChangeListener { _, isChecked ->
             db.collection("users").document(currentUser?.uid ?: "").update("aiEnabled", isChecked)
@@ -158,6 +162,17 @@ class ProfileFragment : Fragment() {
             .addOnFailureListener {
                 Toast.makeText(context, "Erreur lors du chargement des paramètres IA", Toast.LENGTH_SHORT).show()
             }
+    }
+    private fun saveNotificationState(isEnabled: Boolean) {
+        val sharedPreferences = requireContext().getSharedPreferences("UserPreferences", 0)
+        sharedPreferences.edit()
+            .putBoolean("notifications_enabled", isEnabled)
+            .apply()
+    }
+
+    private fun loadNotificationState(): Boolean {
+        val sharedPreferences = requireContext().getSharedPreferences("UserPreferences", 0)
+        return sharedPreferences.getBoolean("notifications_enabled", true)
     }
 
     private fun saveObjectiveToFirestore(objective: String) {
