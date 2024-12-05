@@ -77,7 +77,7 @@ class PropositionsTasks : Fragment() {
                         GroqApi.generateTaskSuggestions(context, userObjective) { suggestions ->
                             suggestions.forEach { suggestion ->
                                 Log.d("PropositionsTasks", "Suggestion: ${suggestion.description}")
-                                infoPropositions[suggestion.titre] = suggestion.description
+                                infoPropositions["IA : "+suggestion.titre] = suggestion.description
                                 //TODO: pour ajouter les descriptions des tâches, l'ia les fournit dans suggestions.description
                             }
                             infoPropositions["Aller faire les courses"] = null
@@ -91,24 +91,12 @@ class PropositionsTasks : Fragment() {
                             infoPropositions["Contacter la famille"] = null
                             infoPropositions["Limiter le temps sur les réseaux sociaux"] = null
                             infoPropositions["Faire le ménage"] = null
-                            println(infoPropositions)
 
                             infoPropositions.forEach { (titre, description) ->
                                 dataArrayList.add(titre)
                             }
 
                             listAdapter.notifyDataSetChanged()
-                            /*dataArrayList.add("Aller faire les courses")
-                            dataArrayList.add("Prendre une pause")
-                            dataArrayList.add("Apprendre une langue étrangère")
-                            dataArrayList.add("Apprendre à jouer d'un instrument")
-                            dataArrayList.add("Aller faire du sport")
-                            dataArrayList.add("Lire un livre")
-                            dataArrayList.add("Sortir prendre l'air")
-                            dataArrayList.add("Contacter la famille")
-                            dataArrayList.add("Limiter le temps sur les réseaux sociaux")
-                            dataArrayList.add("Faire le ménage")
-                            listAdapter.notifyDataSetChanged()*/
                         }
                     } else {
 
@@ -129,18 +117,6 @@ class PropositionsTasks : Fragment() {
                         }
 
                         listAdapter.notifyDataSetChanged()
-
-                        /*dataArrayList.add("Aller faire les courses")
-                        dataArrayList.add("Prendre une pause")
-                        dataArrayList.add("Apprendre une langue étrangère")
-                        dataArrayList.add("Apprendre à jouer d'un instrument")
-                        dataArrayList.add("Aller faire du sport")
-                        dataArrayList.add("Lire un livre")
-                        dataArrayList.add("Sortir prendre l'air")
-                        dataArrayList.add("Contacter la famille")
-                        dataArrayList.add("Limiter le temps sur les réseaux sociaux")
-                        dataArrayList.add("Faire le ménage")
-                        listAdapter.notifyDataSetChanged()*/
                     }
                 }
         }.addOnFailureListener {

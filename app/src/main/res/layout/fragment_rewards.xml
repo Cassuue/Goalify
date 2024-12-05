@@ -14,7 +14,7 @@
             android:id="@+id/unlocked_achievements_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Unlocked Achievements"
+            android:text="Récompenses débloquées"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -29,7 +29,7 @@
             android:id="@+id/hidden_achievements_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Locked Achievements"
+            android:text="Récompenses bloquées"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginTop="24dp" />
