@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         Locale.setDefault(locale)
         val config = resources.configuration
         config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
+        createConfigurationContext(config)
 
         // NOTIFICATIONS
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

@@ -9,7 +9,7 @@ import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
 
@@ -41,7 +41,7 @@ object GroqApi {
 
         val request = Request.Builder()
             .url(BASE_URL)
-            .post(RequestBody.create("application/json".toMediaTypeOrNull(), requestBody))
+            .post(requestBody.toRequestBody("application/json".toMediaTypeOrNull()))
             .addHeader("Authorization", "Bearer $API_KEY")
             .addHeader("Content-Type", "application/json")
             .build()
@@ -56,7 +56,7 @@ object GroqApi {
                     val responseBody = response.body?.string()
                     val type = object : TypeToken<Map<String, Any>>() {}.type
                     val responseMap = gson.fromJson<Map<String, Any>>(responseBody, type)
-                    val choices = responseMap["choices"] as? List<Map<String, Any>>
+                    val choices = (responseMap["choices"] as? List<*>)?.filterIsInstance<Map<String, Any>>()
                     val messageContent = choices?.firstOrNull()?.get("message") as? Map<*, *>?
                     val content = messageContent?.get("content") as? String
 
@@ -67,7 +67,7 @@ object GroqApi {
                         callback(suggestions)
                     }
                 } else {
-                    Log.e("GroqApi", "Failed to generate task suggestions: ${response}")
+                    Log.e("GroqApi", "Failed to generate task suggestions: $response")
                 }
             }
         })

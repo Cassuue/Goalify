@@ -6,19 +6,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.database
 
 private const val ARG_TITLE = "taskTitle"
@@ -123,7 +120,7 @@ class AddTask : Fragment() {
 
         // Pour chaque checkbox on récupère la valeur et on l'ajoute dans le dictionnaire
         arrayCheckBoxs.forEach { checkBox->
-            checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
                 list_resDay[checkBox.tag.toString()] = isChecked
             }
         }

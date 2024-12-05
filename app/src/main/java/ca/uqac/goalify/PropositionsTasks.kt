@@ -44,7 +44,7 @@ class PropositionsTasks : Fragment() {
         listAdapter = ListAdapterPropositions(requireContext(), dataArrayList)
         listView.adapter = listAdapter
 
-        listView.setOnItemClickListener { parent, view, position, id ->
+        listView.setOnItemClickListener { _, _, position, _ ->
             val selectedItem = dataArrayList[position]
             val description = infoPropositions[selectedItem]
             val bundle = Bundle().apply {
@@ -78,7 +78,6 @@ class PropositionsTasks : Fragment() {
                             suggestions.forEach { suggestion ->
                                 Log.d("PropositionsTasks", "Suggestion: ${suggestion.description}")
                                 infoPropositions["IA : "+suggestion.titre] = suggestion.description
-                                //TODO: pour ajouter les descriptions des tâches, l'ia les fournit dans suggestions.description
                             }
                             infoPropositions["Aller faire les courses"] = null
                             infoPropositions["Prendre une pause"] = null
@@ -92,7 +91,7 @@ class PropositionsTasks : Fragment() {
                             infoPropositions["Limiter le temps sur les réseaux sociaux"] = null
                             infoPropositions["Faire le ménage"] = null
 
-                            infoPropositions.forEach { (titre, description) ->
+                            infoPropositions.forEach { (titre, _) ->
                                 dataArrayList.add(titre)
                             }
 
@@ -112,7 +111,7 @@ class PropositionsTasks : Fragment() {
                         infoPropositions["Limiter le temps sur les réseaux sociaux"] = null
                         infoPropositions["Faire le ménage"] = null
 
-                        infoPropositions.forEach { (titre, description) ->
+                        infoPropositions.forEach { (titre, _) ->
                             dataArrayList.add(titre)
                         }
 

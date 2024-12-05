@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.CheckBox
@@ -16,7 +15,6 @@ import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -29,12 +27,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import java.text.SimpleDateFormat
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import java.util.Calendar
 
 
 class Home : Fragment() {
@@ -157,7 +151,7 @@ class Home : Fragment() {
 
             // Pour chaque checkbox on récupère la valeur et on l'ajoute dans le dictionnaire
             arrayCheckBoxs.forEach { checkBox->
-                checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                checkBox.setOnCheckedChangeListener { _, isChecked ->
                     task.days[checkBox.tag.toString()] = isChecked
                 }
             }
@@ -258,7 +252,7 @@ class Home : Fragment() {
                     listView.adapter = listAdapter
                     listView.isClickable = true
 
-                    listView.setOnItemClickListener { parent, view, position, id ->
+                    listView.setOnItemClickListener { _, view, position, _ ->
                         val selectedItem = dataArrayList[position]
                         if(selectedItem != null){
                             selectedItem.validate = if(selectedItem.validate) false else true
@@ -270,11 +264,10 @@ class Home : Fragment() {
                                 nameTask.paintFlags = nameTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
                             }
                         }
-                        true
                     }
 
                     // Event listener for update tasks
-                    listView.setOnItemLongClickListener { parent, view, position, id ->
+                    listView.setOnItemLongClickListener { _, _, position, _ ->
                         val selectedItem = dataArrayList[position]
                         updateTask(selectedItem, userUid)
                         true
